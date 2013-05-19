@@ -32,6 +32,7 @@ bool ShaderProgram::link()
         free(infoLog);
         return false; 
     }
+	
     
     
     
@@ -47,41 +48,53 @@ bool ShaderProgram::link()
     return true;
 }
 
-GLint ShaderProgram::getAttributeLocation(string attributeName)
+GLint ShaderProgram::getAttributeLocation(const string& attributeName)
 {
     return attributes[attributeName];
 }
 
-GLint ShaderProgram::getUniformLocation(string uniformName)
+GLint ShaderProgram::getUniformLocation(const string& uniformName)
 {
     return uniforms[uniformName];
 }
 
 bool ShaderProgram::initUniformLocations()
 {
-    GLint mvp = glGetUniformLocation(shaderProgramObject, u_ModelViewProjection.c_str());
-    if(mvp == -1) {
-        printf("Cannot find %s", u_ModelViewProjection.c_str());
-        return false;
-    }
-    
-    uniforms[u_ModelViewProjection] = mvp;
-
-   GLint sampler = glGetUniformLocation(shaderProgramObject, u_Sampler.c_str());
-   if(sampler == -1) {
-	   printf("Cannot find %s", u_Sampler.c_str());
-       return false;
-   }
-   uniforms[u_Sampler] = sampler;
-    
-   return true;
-    
+	GLint mvp = glGetUniformLocation(shaderProgramObject, u_ModelViewProjection.c_str());
+	if(mvp == -1) {
+		printf("Cannot find %s", u_ModelViewProjection.c_str());
+		return false;
+	}
+	
+	uniforms[u_ModelViewProjection] = mvp;
+	
+	GLint sampler = glGetUniformLocation(shaderProgramObject, u_Sampler.c_str());
+	if(sampler == -1) {
+		printf("Cannot find %s", u_Sampler.c_str());
+		return false;
+	}
+	uniforms[u_Sampler] = sampler;
+	
+	return true;
+	
 }
 
 bool ShaderProgram::initAttributeLocations()
 {
-    attributes[a_Position] =  0;
-    attributes[a_TexCoords] = 1;
+	
+	GLint pos = glGetAttribLocation(shaderProgramObject, a_Position.c_str());
+	if(pos == -1) {
+        printf("Cannot find %s", a_Position.c_str());
+        return false;
+    }
+	attributes[a_Position] =  pos;
+
+	GLint textureCoords = glGetAttribLocation(shaderProgramObject, a_TexCoords.c_str());
+	if(textureCoords == -1) {
+        printf("Cannot find %s", a_TexCoords.c_str());
+        return false;
+    }
+    attributes[a_TexCoords] = textureCoords;
     return true;
 }
 
