@@ -7,7 +7,10 @@
 
 Cube::Cube()
 {
-
+	mModelTransform = glm::mat4(1.0);
+	mParentTransofm = glm::mat4(1.0);
+	mParentTransofm = glm::translate(mParentTransofm, glm::vec3(0, 0, -6.5));
+	mParentTransofm = glm::rotate(mParentTransofm, 55.0f, glm::vec3(1, 0, 0));
 }
 
 Cube::~Cube()
@@ -15,7 +18,7 @@ Cube::~Cube()
 	glDeleteBuffers(3, mVboIds);
 }
 
-void Cube::draw(ShaderProgram* program)
+void Cube::draw(ShaderProgram* program, glm::mat4& viewProjection)
 {
 	GLint vertIdx = program->getAttributeLocation(a_Position);
 	glEnableVertexAttribArray(vertIdx);
@@ -44,12 +47,59 @@ void Cube::draw(ShaderProgram* program)
 	
 	/* Push each element in buffer_vertices to the vertex shader */
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mVboIds[2]);
+	float xoffset = 1.4;
+	float yoffset = 2;
+	float zoffset = 1.4;
+	
+	float x = 1.4;
+	float y = 2;
+	float z = 1.4;
+	int row = 2;
+	
+	mModelTransform = glm::rotate(mModelTransform, 45.0f, glm::vec3(0, 1, 0));
+	internalDraw(program, viewProjection);
+	mModelTransform = glm::mat4(1.0);
+	
+	for(int i = 1; i < 5; ++i) {
+		float xnew = x;
+		for(int r = 0; r < row; ++r) {
+			mModelTransform = glm::translate(mModelTransform, glm::vec3(xnew, y, z));
+			mModelTransform = glm::rotate(mModelTransform, 45.0f, glm::vec3(0, 1, 0));
+			
+			internalDraw(program, viewProjection);
+			xnew -= 2 * xoffset;
+			mModelTransform = glm::mat4(1.0);
+		}
+		x += xoffset;
+		y += yoffset;
+		z += zoffset;
+		row++;
+	}
 	
 	
-	glDrawElements(GL_TRIANGLES, 72/sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
 	
 	glDisableVertexAttribArray(vertIdx);
 	glDisableVertexAttribArray(texCoords);
+ 	
+}
+
+
+void Cube::internalDraw(ShaderProgram* program, const glm::mat4& viewProjection)
+{
+	glm::mat4 mvp = viewProjection * mParentTransofm * mModelTransform;
+	
+	GLint mvpId = program->getUniformLocation(u_ModelViewProjection);
+	glUniformMatrix4fv(mvpId, 1, GL_FALSE, glm::value_ptr(mvp));
+	
+	glDrawElements(GL_TRIANGLES, 72/sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
+}
+
+void Cube::update(double time) 
+{
+	mParentTransofm = glm::translate(mParentTransofm, glm::vec3(0, 6, 0));
+	float angle =  time / 1000.0 * 75.0;
+	mParentTransofm = glm::rotate(mParentTransofm,angle, glm::vec3(0, 0, 1));
+	mParentTransofm = glm::translate(mParentTransofm, glm::vec3(0, -6, 0));
 }
 
 void Cube::initGeometry()
