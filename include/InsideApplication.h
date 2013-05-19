@@ -24,21 +24,26 @@ public:
 	void reshape(int width, int height);
 	void onKeyPressed();
 	
-	void onPointerDown(int x, int y);
+	void onPointerDown(int left, int right, double x, double y);
 	void onPointerMoved(double x, double y);
 	
 private:
 	
 	
 	
-	
 private:
 	ShaderProgram* mShaderProgram;
-	GLuint texture;
-	glm::mat4 model;
-	glm::mat4 view;
-	glm::mat4 projection;
+	GLuint mTextureHandle;
+	glm::mat4 mViewTransform;
+	glm::mat4 mProjectionTransform;
 	Cube* cube;
+	int mScreenWidth;
+	int mScreenHeight;
+	bool mLeftPressed;
+	
+	float mLastXPos ,mCurrentXPos;
+	
+    float mLastYPos , mCurYPos;
 	
 };
 

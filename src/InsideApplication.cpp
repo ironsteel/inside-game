@@ -23,11 +23,12 @@ void InsideApplication::init()
 	if(!mShaderProgram->link()) {
 		printf("Cannot link program");
 	}
-	TextureUtils::loadTexture("../resources/textures/wood.jpg", &texture);
+	TextureUtils::loadTexture("../resources/textures/wood.jpg", &mTextureHandle);
 	
-	model = glm::mat4(1.0f);
 	cube->initGeometry();
+	mViewTransform = glm::lookAt(glm::vec3(0, 20, -20), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
  	glEnable(GL_DEPTH_TEST);
+	
 }
 
 void InsideApplication::drawOneFrame()
@@ -36,30 +37,27 @@ void InsideApplication::drawOneFrame()
 	
 	glUseProgram(mShaderProgram->getProgramId());
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	
-	glm::mat4 mvp = projection * view * model;
-	
-	GLint mvpId = mShaderProgram->getUniformLocation(u_ModelViewProjection);
-	glUniformMatrix4fv(mvpId, 1, GL_FALSE, glm::value_ptr(mvp));
+	glBindTexture(GL_TEXTURE_2D, mTextureHandle);
 	
 	GLint textureLocation = mShaderProgram->getUniformLocation(u_Sampler);
 	glUniform1i(textureLocation, 0);
 	
-	cube->draw(mShaderProgram);
+	glm::mat4 mvp = mProjectionTransform * mViewTransform ;
+	cube->draw(mShaderProgram,  mvp);
+	
 }
 
 void InsideApplication::update(double timeSinceLastFrame)
 {
-	float angle =  timeSinceLastFrame / 1000.0 * 75.0;
-	model = glm::rotate(model,angle, glm::vec3(0, 1, 0));
+	
 }
 
 void InsideApplication::reshape(int width, int height)
 {
 	glViewport(0, 0, width, height);
-	projection = glm::perspective(45.0, (double) width / height, 0.1, 100.0);
-    view = glm::lookAt(glm::vec3(0, 0, -5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+	mScreenWidth = width;
+	mScreenHeight = height;
+	mProjectionTransform = glm::perspective(45.0, (double) width / height, 0.1, 100.0);
 }
 
 void InsideApplication::onKeyPressed()
@@ -67,13 +65,26 @@ void InsideApplication::onKeyPressed()
 	
 }
 
-void InsideApplication::onPointerDown(int x, int y)
+void InsideApplication::onPointerDown(int left, int right, double x, double y)
 {
-	
+	mLeftPressed = (right == 1);
+	if(mLeftPressed) {
+		mLastXPos = mCurrentXPos = x;
+		mLastYPos = mCurYPos = y;
+	}
 }
 
 void InsideApplication::onPointerMoved(double x, double y)
 {
+	mCurrentXPos = x;
+	mCurYPos = y;
+	if(mLeftPressed) {
+		if (mCurrentXPos != mLastXPos || mCurYPos != mLastYPos) {
+			mViewTransform  = glm::rotate(mViewTransform, glm::degrees(-(float)((mLastXPos - mCurrentXPos)/(mScreenWidth/4))), glm::vec3(0, 1, 0));
+			mLastXPos = mCurrentXPos;
+			mLastYPos = mCurYPos;
+		}
+	}
 	
 }
 

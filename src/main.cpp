@@ -41,6 +41,7 @@ void key( GLFWwindow* window, int k, int action )
 {
 	if( action != GLFW_PRESS ) return;
 	
+    
 	switch (k) {
 		case GLFW_KEY_Z:
 			break;
@@ -77,7 +78,10 @@ static void init(int argc, char *argv[])
 
 static void mouse_down(GLFWwindow *window, int x, int y)
 {
-	app.onPointerDown(x, y);
+	double cursorX, cursorY;
+	glfwGetCursorPos(window, &cursorX, &cursorY);
+	
+	app.onPointerDown(x, y, cursorX, cursorY);
 }
 
 static void cursor_moved(GLFWwindow *window, double x, double y) 
@@ -99,6 +103,7 @@ int main(int argc, char *argv[])
 	
 	glfwSetErrorCallback(error_callback);
 	
+    
 	if( !glfwInit() )
 	{
 		fprintf( stderr, "Failed to initialize GLFW\n" );
@@ -129,7 +134,6 @@ int main(int argc, char *argv[])
 	
 	glfwGetWindowSize(window, &width, &height);
 	reshape(window, width, height);
-	
 	// Parse command-line options
 	init(argc, argv);
 	
