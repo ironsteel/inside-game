@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
-class Cube;
+class GameBoard;
 class ShaderProgram;
 
 
@@ -36,7 +36,7 @@ private:
 	GLuint mTextureHandle;
 	glm::mat4 mViewTransform;
 	glm::mat4 mProjectionTransform;
-	Cube* cube;
+	GameBoard* cube;
 	int mScreenWidth;
 	int mScreenHeight;
 	bool mLeftPressed;

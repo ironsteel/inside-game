@@ -1,12 +1,12 @@
 #include "InsideApplication.h"
 #include "ShaderUtills.h"
 #include "ShaderProgram.h"
-#include "Cube.h"
+#include "GameBoard.h"
 #include "TextureUtils.h"
 
 InsideApplication::InsideApplication()
 {
-	cube = new Cube();
+	cube = new GameBoard();
 }
 
 InsideApplication::~InsideApplication()
