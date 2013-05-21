@@ -75,6 +75,15 @@ bool ShaderProgram::initUniformLocations()
 	}
 	uniforms[u_Sampler] = sampler;
 	
+	
+	
+	GLint selected = glGetUniformLocation(shaderProgramObject, u_Selected.c_str());
+	if(selected == -1) {
+		printf("Cannot find %s", u_Selected.c_str());
+		return false;
+	}
+	uniforms[u_Selected] = selected;
+	
 	return true;
 	
 }

@@ -34,7 +34,7 @@ void GameBoard::draw(ShaderProgram* program, glm::mat4& viewProjection)
 	
 	for(size_t i = 0; i < mCubes.size(); i++) {
 		glm::mat4 mvp = viewProjection * mTransofm * mCubes[i]->getTransform();
-		internalDraw(program, mvp);
+		internalDraw(program, mvp, mCubes[i]);
 	}
 	
 	mCubeGeometry->unbind(vertIdx, texCoords);
@@ -42,10 +42,18 @@ void GameBoard::draw(ShaderProgram* program, glm::mat4& viewProjection)
 }
 
 
-void GameBoard::internalDraw(ShaderProgram* program, const glm::mat4& mvp)
+void GameBoard::internalDraw(ShaderProgram* program, const glm::mat4& mvp, Cube* cube)
 {
 	GLint mvpId = program->getUniformLocation(u_ModelViewProjection);
 	glUniformMatrix4fv(mvpId, 1, GL_FALSE, glm::value_ptr(mvp));
+	
+	
+	GLint selected = program->getUniformLocation(u_Selected);
+	if(cube->mSelected) {
+		glUniform1i(selected, 1);
+	} else {
+		glUniform1i(selected, 0);
+	}
 	
 	mCubeGeometry->draw();
 }
@@ -56,6 +64,22 @@ void GameBoard::update(double time)
 	float angle =  time / 1000.0 * 75.0;
 	mTransofm = glm::rotate(mTransofm,angle, glm::vec3(0, 0, 1));
 	mTransofm = glm::translate(mTransofm, glm::vec3(0, -6, 0));
+}
+
+void GameBoard::intersect(glm::mat4 viewProjection, glm::vec3 mRayDirection, glm::vec3 mRayPos) 
+{
+	for(int i = 0; i < mCubes.size(); i++) {
+		glm::mat4 mvp =  mTransofm * mCubes[i]->getTransform();
+		if(mCubeGeometry->intersect(mvp, mRayDirection, mRayPos)) {
+			mCubes[i]->mSelected = !mCubes[i]->mSelected;
+			break;
+		}
+	}
+}
+
+glm::mat4& GameBoard::getTransform()
+{
+	return mTransofm;
 }
 
 void GameBoard::initGeometry()

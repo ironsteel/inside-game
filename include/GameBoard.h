@@ -23,7 +23,9 @@ public:
 	void initGeometry();
 	void draw(ShaderProgram* program, glm::mat4& viewProjection);
 	void update(double time);
-	void internalDraw(ShaderProgram* program, const glm::mat4& mvp);
+	void internalDraw(ShaderProgram* program, const glm::mat4& mvp, Cube* cube);
+    void intersect(glm::mat4 viewProjection, glm::vec3 mRayDirection, glm::vec3 mRayPos);
+	glm::mat4& getTransform();
 	
 	
 private:

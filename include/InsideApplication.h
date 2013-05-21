@@ -28,7 +28,9 @@ public:
 	void onPointerMoved(double x, double y);
 	
 private:
-	
+	void doSelection(float x, float y);
+    void findIntersection();
+
 	
 	
 private:
@@ -44,6 +46,12 @@ private:
 	float mLastXPos ,mCurrentXPos;
 	
     float mLastYPos , mCurYPos;
+    glm::detail::tvec3< glm::mediump_float > mLookAt;
+    glm::detail::tvec3< glm::mediump_float > mPosition;
+    glm::detail::tvec3< glm::mediump_float > mCameraUp;
+	
+	glm::vec3 mRayPos;
+	glm::vec3 mRayDirection;
 	
 };
 

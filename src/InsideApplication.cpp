@@ -3,6 +3,7 @@
 #include "ShaderProgram.h"
 #include "GameBoard.h"
 #include "TextureUtils.h"
+#include <math.h>
 
 InsideApplication::InsideApplication()
 {
@@ -26,9 +27,12 @@ void InsideApplication::init()
 	TextureUtils::loadTexture("../resources/textures/wood.jpg", &mTextureHandle);
 	
 	cube->initGeometry();
+	
+	mLookAt = glm::vec3(0, 20, -20);
+	mPosition = glm::vec3(0, 0, 0);
+	mCameraUp = glm::vec3(0, 1, 0);
 	mViewTransform = glm::lookAt(glm::vec3(0, 20, -20), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
  	glEnable(GL_DEPTH_TEST);
-	
 }
 
 void InsideApplication::drawOneFrame()
@@ -68,10 +72,39 @@ void InsideApplication::onKeyPressed()
 void InsideApplication::onPointerDown(int left, int right, double x, double y)
 {
 	mLeftPressed = (right == 1);
+	
+	doSelection((float)x, (float)y);
+	findIntersection();
 	if(mLeftPressed) {
 		mLastXPos = mCurrentXPos = x;
 		mLastYPos = mCurYPos = y;
 	}
+}
+
+void InsideApplication::findIntersection()
+{
+	glm::mat4 viewProjection = mViewTransform;
+	cube->intersect(viewProjection, mRayDirection, mRayPos);
+}
+
+void InsideApplication::doSelection(float x, float y)
+{
+	
+	float mouseX = x;
+	float mouseY = mScreenHeight - y;
+	glm::vec3 worldSpaceNear = glm::unProject(glm::vec3(mouseX, mouseY, 0.0),
+											  mViewTransform, 
+											  mProjectionTransform, 
+											  glm::vec4(0, 0, mScreenWidth, mScreenHeight));
+	glm::vec3 worldSpaceFar = glm::unProject(glm::vec3(mouseX, mouseY, 1.0),
+											 mViewTransform , 
+											 mProjectionTransform, 
+										  glm::vec4(0, 0, mScreenWidth, mScreenHeight));
+	
+	
+	mRayPos = glm::vec3(worldSpaceNear.x, worldSpaceNear.y, worldSpaceNear.z);
+	mRayDirection = glm::vec3(worldSpaceFar.x - worldSpaceNear.x, worldSpaceFar.y - worldSpaceNear.y, worldSpaceFar.z - worldSpaceNear.z);
+	mRayDirection = glm::normalize(mRayDirection);
 }
 
 void InsideApplication::onPointerMoved(double x, double y)
@@ -84,6 +117,8 @@ void InsideApplication::onPointerMoved(double x, double y)
 			mLastXPos = mCurrentXPos;
 			mLastYPos = mCurYPos;
 		}
+		
+	
 	}
 	
 }

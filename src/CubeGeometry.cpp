@@ -3,6 +3,8 @@
  */
 
 #include "CubeGeometry.h"
+#include "IntersectUtils.h"
+
 
 CubeGeometry::CubeGeometry() : mCubeVertices(0)
 {
@@ -50,6 +52,29 @@ void CubeGeometry::draw()
 	glDrawElements(GL_TRIANGLES, 72/sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
 }
 
+bool CubeGeometry::intersect(glm::mat4 mvp, glm::vec3 mRayDirection, glm::vec3 mRayPos) 
+{
+	for(int i = 0; i < 36; i+=3) {
+		
+		glm::vec3 verts[3];
+		
+		for(int j = 0; j < 3; j++) {
+			glm::vec4 trangleVerts = glm::vec4(
+				(float)mCubeVertices[mCubeElements[i + j] * 3],
+				(float)mCubeVertices[mCubeElements[i + j] * 3 + 1],
+				(float)mCubeVertices[mCubeElements[i + j] * 3 + 2], 1);
+			trangleVerts = (mvp * trangleVerts);
+			verts[j] = trangleVerts.xyz();
+			
+			
+		}
+		
+		if(IntersectUtils::intersectWithTriangle(mRayPos, mRayDirection, verts)) {
+			return true;
+		}
+	}
+	return false;
+}
 
 
 void CubeGeometry::initGeometry()
@@ -125,6 +150,9 @@ void CubeGeometry::initGeometry()
 		20, 21, 22,
 		22, 23, 20,
 	};
+	
+	mCubeElements = (GLshort *) malloc(sizeof(cube_elements));
+	memcpy(mCubeElements, cube_elements, sizeof(cube_elements));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mVboIds[2]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_elements), cube_elements, GL_STATIC_DRAW);
 }
@@ -132,5 +160,6 @@ void CubeGeometry::initGeometry()
 CubeGeometry::~CubeGeometry()
 {
    free(mCubeVertices);
+   free(mCubeElements);
    glDeleteBuffers(3, mVboIds);
 }

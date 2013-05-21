@@ -14,6 +14,9 @@ public:
     virtual ~Cube();
 	
 	glm::mat4& getTransform();
+	
+	bool mSelected;
+	
 private:
 	glm::mat4 mTransform;
 };
