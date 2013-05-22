@@ -68,7 +68,7 @@ void GameBoard::update(double time)
 
 void GameBoard::intersect(glm::mat4 viewProjection, glm::vec3 mRayDirection, glm::vec3 mRayPos) 
 {
-	for(int i = 0; i < mCubes.size(); i++) {
+	for(int i = mCubes.size() - 1; i >=0; i--) {
 		glm::mat4 mvp =  mTransofm * mCubes[i]->getTransform();
 		if(mCubeGeometry->intersect(mvp, mRayDirection, mRayPos)) {
 			mCubes[i]->mSelected = !mCubes[i]->mSelected;
