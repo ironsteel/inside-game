@@ -13,7 +13,7 @@ GameBoard::GameBoard() :
 	mTransofm(glm::mat4(1.0))
 {
 	mTransofm = glm::mat4(1.0);
-	mTransofm = glm::translate(mTransofm, glm::vec3(0, 0, -7.5));
+	mTransofm = glm::translate(mTransofm, glm::vec3(0, 0, -8.2));
 	mTransofm = glm::rotate(mTransofm, 55.0f, glm::vec3(1, 0, 0));
 }
 
@@ -110,5 +110,40 @@ void GameBoard::initGeometry()
 		z += zoffset;
 		row++;
 	}
+
+	buildNextBoardLevel(2, 5);
+	buildNextBoardLevel(4, 4);
+	buildNextBoardLevel(6, 3);
+	buildNextBoardLevel(8, 2);
+	buildNextBoardLevel(10, 1);
+}
+
+
+void GameBoard::buildNextBoardLevel(float startFrom, int level) 
+{
+	float xoffset = 1.4;
+	float yoffset = 2;
+	float zoffset = 1.4;
 	
+	float x = 1.4;
+	float y = startFrom + 2;
+	float z = 1.4;
+	int row = 2;
+	glm::vec3 pos = glm::vec3(0, startFrom, 0);
+	Cube* cube = new Cube(pos);
+	mCubes.push_back(cube);
+	
+	for(int i = 1; i < level; ++i) {
+		float xnew = x;
+		for(int r = 0; r < row; ++r) {
+			pos = glm::vec3(xnew, y, z);
+			cube = new Cube(pos);
+			mCubes.push_back(cube);
+			xnew -= 2 * xoffset;
+		}
+		x += xoffset;
+		y += yoffset;
+		z += zoffset;
+		row++;
+	}
 }

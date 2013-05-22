@@ -27,6 +27,9 @@ public:
     void intersect(glm::mat4 viewProjection, glm::vec3 mRayDirection, glm::vec3 mRayPos);
 	glm::mat4& getTransform();
 	
+private:
+	void buildNextBoardLevel(float startFrom, int level);
+	
 	
 private:
 	glm::mat4 mTransofm;
