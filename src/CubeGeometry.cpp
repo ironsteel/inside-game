@@ -3,7 +3,6 @@
  */
 
 #include "CubeGeometry.h"
-#include "IntersectUtils.h"
 #include <glm/ext.hpp>
 
 
