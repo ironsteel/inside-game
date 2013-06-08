@@ -72,12 +72,11 @@ void InsideApplication::onKeyPressed()
 void InsideApplication::onPointerDown(int left, int right, double x, double y)
 {
 	mLeftPressed = (right == 1);
-	
-	doSelection((float)x, (float)y);
-	findIntersection();
 	if(mLeftPressed) {
 		mLastXPos = mCurrentXPos = x;
 		mLastYPos = mCurYPos = y;
+		doSelection((float)x, (float)y);
+		findIntersection();
 	}
 }
 
@@ -117,8 +116,6 @@ void InsideApplication::onPointerMoved(double x, double y)
 			mLastXPos = mCurrentXPos;
 			mLastYPos = mCurYPos;
 		}
-		
-	
 	}
 	
 }

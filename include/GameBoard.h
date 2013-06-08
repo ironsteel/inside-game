@@ -7,7 +7,7 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 #include <vector>
-
+#include <list>
 class CubeGeometry;
 
 #ifndef GAMEBOARD_H
@@ -35,6 +35,7 @@ private:
 	glm::mat4 mTransofm;
 	CubeGeometry* mCubeGeometry;
 	std::vector<Cube*> mCubes;
+	std::list<Cube*> mNotVisibleCubes;
 
 };
 

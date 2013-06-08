@@ -9,7 +9,7 @@
 
 GameBoard::GameBoard() : 
 	mCubeGeometry(new CubeGeometry()), 
-	mCubes(0), 
+	mCubes(0), mNotVisibleCubes(0),
 	mTransofm(glm::mat4(1.0))
 {
 	mTransofm = glm::mat4(1.0);
@@ -20,8 +20,13 @@ GameBoard::GameBoard() :
 GameBoard::~GameBoard()
 {
 	size_t size = mCubes.size();
-	for(size_t i = 0; i < size; i++) {
+	for(size_t i = 0; i < size; ++i) {
 		delete mCubes[i];
+	}
+	
+	while(!mNotVisibleCubes.empty()) {
+		delete mNotVisibleCubes.front();
+		mNotVisibleCubes.pop_front();
 	}
 }
 
@@ -38,7 +43,6 @@ void GameBoard::draw(ShaderProgram* program, glm::mat4& viewProjection)
 	}
 	
 	mCubeGeometry->unbind(vertIdx, texCoords);
- 	
 }
 
 
@@ -68,10 +72,15 @@ void GameBoard::update(double time)
 
 void GameBoard::intersect(glm::mat4 viewProjection, glm::vec3 mRayDirection, glm::vec3 mRayPos) 
 {
-	for(int i = mCubes.size() - 1; i >=0; i--) {
-		glm::mat4 mvp =  mTransofm * mCubes[i]->getTransform();
-		if(mCubeGeometry->intersect(mvp, mRayDirection, mRayPos)) {
-			mCubes[i]->mSelected = !mCubes[i]->mSelected;
+	
+	for (list<Cube*>::iterator ci = mNotVisibleCubes.begin(); ci != mNotVisibleCubes.end(); ++ci)
+	{
+		glm::mat4 mvp =  mTransofm * (*ci)->getTransform();
+		bool selected = (*ci)->mSelected;
+		if(!selected && mCubeGeometry->intersect(mvp, mRayDirection, mRayPos)) {
+			(*ci)->mSelected = !(*ci)->mSelected;
+			mCubes.push_back(*ci);
+			mNotVisibleCubes.erase(ci);
 			break;
 		}
 	}
@@ -131,14 +140,14 @@ void GameBoard::buildNextBoardLevel(float startFrom, int level)
 	int row = 2;
 	glm::vec3 pos = glm::vec3(0, startFrom, 0);
 	Cube* cube = new Cube(pos);
-	mCubes.push_back(cube);
+	mNotVisibleCubes.push_back(cube);
 	
 	for(int i = 1; i < level; ++i) {
 		float xnew = x;
 		for(int r = 0; r < row; ++r) {
 			pos = glm::vec3(xnew, y, z);
 			cube = new Cube(pos);
-			mCubes.push_back(cube);
+			mNotVisibleCubes.push_back(cube);
 			xnew -= 2 * xoffset;
 		}
 		x += xoffset;

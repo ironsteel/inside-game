@@ -4,6 +4,7 @@
 
 #include "CubeGeometry.h"
 #include "IntersectUtils.h"
+#include <glm/ext.hpp>
 
 
 CubeGeometry::CubeGeometry() : mCubeVertices(0)
@@ -54,6 +55,8 @@ void CubeGeometry::draw()
 
 bool CubeGeometry::intersect(glm::mat4 mvp, glm::vec3 mRayDirection, glm::vec3 mRayPos) 
 {
+	
+	glm::vec3 bary;
 	for(int i = 0; i < 36; i+=3) {
 		
 		glm::vec3 verts[3];
@@ -66,10 +69,8 @@ bool CubeGeometry::intersect(glm::mat4 mvp, glm::vec3 mRayDirection, glm::vec3 m
 			trangleVerts = (mvp * trangleVerts);
 			verts[j] = trangleVerts.xyz();
 			
-			
 		}
-		
-		if(IntersectUtils::intersectWithTriangle(mRayPos, mRayDirection, verts)) {
+		if(glm::intersectRayTriangle(mRayPos, mRayDirection, verts[0], verts[1], verts[2], bary)) {
 			return true;
 		}
 	}
