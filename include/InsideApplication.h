@@ -38,7 +38,7 @@ private:
 	GLuint mTextureHandle;
 	glm::mat4 mViewTransform;
 	glm::mat4 mProjectionTransform;
-	GameBoard* cube;
+	GameBoard* mGameBoard;
 	int mScreenWidth;
 	int mScreenHeight;
 	bool mLeftPressed;

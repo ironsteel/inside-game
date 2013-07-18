@@ -21,7 +21,7 @@ public:
 	void bindBuffers(GLint vertexId, GLint textureCoordsId);
 	void unbind(GLint vertexId, GLint textureCoordsId);
 	void draw();
-    bool intersect(glm::mat4 mvp, glm::vec3 mRayDirection, glm::vec3 mRayPos);
+    bool intersect(glm::mat4 &mvp, glm::vec3 &mRayDirection, glm::vec3 &mRayPos);
 	
 private:
 	GLuint mVboIds[3];

@@ -49,10 +49,10 @@ void CubeGeometry::unbind(GLint vertexId, GLint textureCoordsId)
 
 void CubeGeometry::draw()
 {
-	glDrawElements(GL_TRIANGLES, 72/sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
 }
 
-bool CubeGeometry::intersect(glm::mat4 mvp, glm::vec3 mRayDirection, glm::vec3 mRayPos) 
+bool CubeGeometry::intersect(glm::mat4 &mvp, glm::vec3 &mRayDirection, glm::vec3 &mRayPos) 
 {
 	
 	glm::vec3 bary;
@@ -64,7 +64,8 @@ bool CubeGeometry::intersect(glm::mat4 mvp, glm::vec3 mRayDirection, glm::vec3 m
 			glm::vec4 trangleVerts = glm::vec4(
 				(float)mCubeVertices[mCubeElements[i + j] * 3],
 				(float)mCubeVertices[mCubeElements[i + j] * 3 + 1],
-				(float)mCubeVertices[mCubeElements[i + j] * 3 + 2], 1);
+				(float)mCubeVertices[mCubeElements[i + j] * 3 + 2], 
+											   1);
 			trangleVerts = (mvp * trangleVerts);
 			verts[j] = trangleVerts.xyz();
 			

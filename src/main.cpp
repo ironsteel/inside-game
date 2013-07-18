@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <GL/glfw3.h>
+#include <GLFW/glfw3.h>
 #include <time.h>
 #include <sys/time.h>
 
@@ -37,7 +37,7 @@ static void animate(double timeSinceLastFrame)
 
 
 /* change view angle, exit upon ESC */
-void key( GLFWwindow* window, int k, int action )
+void key( GLFWwindow* window, int k, int action, int a, int b )
 {
 	if( action != GLFW_PRESS ) return;
 	
@@ -76,7 +76,7 @@ static void init(int argc, char *argv[])
 }
 
 
-static void mouse_down(GLFWwindow *window, int x, int y)
+static void mouse_down(GLFWwindow *window, int x, int y, int i)
 {
 	double cursorX, cursorY;
 	glfwGetCursorPos(window, &cursorX, &cursorY);
@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 	
-	window = glfwCreateWindow( 860, 640, "Inside", NULL, NULL );
+	window = glfwCreateWindow( 800, 600, "Inside", NULL, NULL );
 	if (!window)
 	{
 		fprintf( stderr, "Failed to open GLFW window\n" );

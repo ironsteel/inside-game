@@ -7,12 +7,12 @@
 
 InsideApplication::InsideApplication()
 {
-	cube = new GameBoard();
+	mGameBoard = new GameBoard();
 }
 
 InsideApplication::~InsideApplication()
 {
-	delete cube;
+	delete mGameBoard;
 	delete mShaderProgram;
 }
 
@@ -26,12 +26,12 @@ void InsideApplication::init()
 	}
 	TextureUtils::loadTexture("../resources/textures/wood.jpg", &mTextureHandle);
 	
-	cube->initGeometry();
+	mGameBoard->initGeometry();
 	
 	mLookAt = glm::vec3(0, 20, -20);
 	mPosition = glm::vec3(0, 0, 0);
 	mCameraUp = glm::vec3(0, 1, 0);
-	mViewTransform = glm::lookAt(glm::vec3(0, 20, -20), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+	mViewTransform = glm::lookAt(mLookAt, mPosition, mCameraUp);
  	glEnable(GL_DEPTH_TEST);
 }
 
@@ -47,7 +47,7 @@ void InsideApplication::drawOneFrame()
 	glUniform1i(textureLocation, 0);
 	
 	glm::mat4 mvp = mProjectionTransform * mViewTransform ;
-	cube->draw(mShaderProgram,  mvp);
+	mGameBoard->draw(mShaderProgram,  mvp);
 	
 }
 
@@ -83,7 +83,7 @@ void InsideApplication::onPointerDown(int left, int right, double x, double y)
 void InsideApplication::findIntersection()
 {
 	glm::mat4 viewProjection = mViewTransform;
-	cube->intersect(viewProjection, mRayDirection, mRayPos);
+	mGameBoard->intersect(viewProjection, mRayDirection, mRayPos);
 }
 
 void InsideApplication::doSelection(float x, float y)
