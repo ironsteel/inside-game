@@ -2,49 +2,49 @@
 
 
 ShaderProgram::ShaderProgram(GLuint vertexShader, GLuint fragmentShader)
+:mVertexShader(vertexShader), mFragmentShader(fragmentShader), mShaderProgramObject(0)
 {
-    this->vertexShader = vertexShader;
-    this->fragmentShader = fragmentShader;
-    this->shaderProgramObject = glCreateProgram();
 }
-
 bool ShaderProgram::link()
 {
+	bool linkStatus = true;
+	mShaderProgramObject = glCreateProgram();
     GLint linked;
     
-    glAttachShader(shaderProgramObject, vertexShader);
-    glAttachShader(shaderProgramObject, fragmentShader);
+    glAttachShader(mShaderProgramObject, mVertexShader);
+    glAttachShader(mShaderProgramObject, mFragmentShader);
     
-    glBindAttribLocation(shaderProgramObject, 0, a_Position.c_str());
-    glBindAttribLocation(shaderProgramObject, 1, a_TexCoords.c_str());
+    glBindAttribLocation(mShaderProgramObject, 0, a_Position.c_str());
+    glBindAttribLocation(mShaderProgramObject, 1, a_TexCoords.c_str());
     
-    glLinkProgram(shaderProgramObject);
+    glLinkProgram(mShaderProgramObject);
 
-    glGetProgramiv(shaderProgramObject, GL_LINK_STATUS, &linked);
+    glGetProgramiv(mShaderProgramObject, GL_LINK_STATUS, &linked);
 
     if (!linked) {
         GLint infoLen = 0;
-        glGetProgramiv(shaderProgramObject, GL_INFO_LOG_LENGTH, &infoLen);
+        glGetProgramiv(mShaderProgramObject, GL_INFO_LOG_LENGTH, &infoLen);
         char *infoLog = (char*) malloc(sizeof(char) * infoLen);
-        glGetProgramInfoLog(shaderProgramObject, infoLen, NULL, infoLog);
+        glGetProgramInfoLog(mShaderProgramObject, infoLen, NULL, infoLog);
         printf("Error linking shader program\n%s\n", infoLog);
-        glDeleteProgram(shaderProgramObject);
+        glDeleteProgram(mShaderProgramObject);
         free(infoLog);
-        return false; 
+        linkStatus = false;
     }
 	
     
     
     
-    if(!initUniformLocations()) {
-        return false;
-    }    
+    if(!initUniformLocations())
+		linkStatus = false;
     
-    if(!initAttributeLocations()) {
-        return false;
-    }
+    
+    if(!initAttributeLocations())
+		linkStatus = false;
             
-    
+    if(!linkStatus)
+		throw std::exception();
+	
     return true;
 }
 
@@ -60,7 +60,7 @@ GLint ShaderProgram::getUniformLocation(const string& uniformName)
 
 bool ShaderProgram::initUniformLocations()
 {
-	GLint mvp = glGetUniformLocation(shaderProgramObject, u_ModelViewProjection.c_str());
+	GLint mvp = glGetUniformLocation(mShaderProgramObject, u_ModelViewProjection.c_str());
 	if(mvp == -1) {
 		printf("Cannot find %s", u_ModelViewProjection.c_str());
 		return false;
@@ -68,7 +68,7 @@ bool ShaderProgram::initUniformLocations()
 	
 	uniforms[u_ModelViewProjection] = mvp;
 	
-	GLint sampler = glGetUniformLocation(shaderProgramObject, u_Sampler.c_str());
+	GLint sampler = glGetUniformLocation(mShaderProgramObject, u_Sampler.c_str());
 	if(sampler == -1) {
 		printf("Cannot find %s", u_Sampler.c_str());
 		return false;
@@ -77,7 +77,7 @@ bool ShaderProgram::initUniformLocations()
 	
 	
 	
-	GLint selected = glGetUniformLocation(shaderProgramObject, u_Selected.c_str());
+	GLint selected = glGetUniformLocation(mShaderProgramObject, u_Selected.c_str());
 	if(selected == -1) {
 		printf("Cannot find %s", u_Selected.c_str());
 		return false;
@@ -91,14 +91,14 @@ bool ShaderProgram::initUniformLocations()
 bool ShaderProgram::initAttributeLocations()
 {
 	
-	GLint pos = glGetAttribLocation(shaderProgramObject, a_Position.c_str());
+	GLint pos = glGetAttribLocation(mShaderProgramObject, a_Position.c_str());
 	if(pos == -1) {
         printf("Cannot find %s", a_Position.c_str());
         return false;
     }
 	attributes[a_Position] =  pos;
 
-	GLint textureCoords = glGetAttribLocation(shaderProgramObject, a_TexCoords.c_str());
+	GLint textureCoords = glGetAttribLocation(mShaderProgramObject, a_TexCoords.c_str());
 	if(textureCoords == -1) {
         printf("Cannot find %s", a_TexCoords.c_str());
         return false;
@@ -110,5 +110,5 @@ bool ShaderProgram::initAttributeLocations()
 
 GLuint ShaderProgram::getProgramId()
 {
-    return shaderProgramObject;
+    return mShaderProgramObject;
 }

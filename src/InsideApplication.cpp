@@ -1,8 +1,8 @@
 #include "InsideApplication.h"
-#include "ShaderUtills.h"
 #include "ShaderProgram.h"
 #include "GameBoard.h"
 #include "TextureUtils.h"
+#include "ShaderManager.h"
 #include <math.h>
 
 InsideApplication::InsideApplication()
@@ -18,12 +18,10 @@ InsideApplication::~InsideApplication()
 
 void InsideApplication::init()
 {
-	GLuint vertexShader = compileShader("../resources/shaders/simple.vsh", GL_VERTEX_SHADER);
-	GLuint fragmentShader = compileShader("../resources/shaders/simple.fsh", GL_FRAGMENT_SHADER);
-	mShaderProgram = new ShaderProgram(vertexShader, fragmentShader);
-	if(!mShaderProgram->link()) {
-		printf("Cannot link program");
-	}
+	mShaderProgram = ShaderManager::getInstance().createShaderProgram("simple",
+																	  "../resources/shaders/simple.vsh",
+																      "../resources/shaders/simple.fsh");
+	
 	TextureUtils::loadTexture("../resources/textures/wood.jpg", &mTextureHandle);
 	
 	mGameBoard->initGeometry();
@@ -82,8 +80,7 @@ void InsideApplication::onPointerDown(int left, int right, double x, double y)
 
 void InsideApplication::findIntersection()
 {
-	glm::mat4 viewProjection = mViewTransform;
-	mGameBoard->intersect(viewProjection, mRayDirection, mRayPos);
+	mGameBoard->intersect(mViewTransform, mRayDirection, mRayPos);
 }
 
 void InsideApplication::doSelection(float x, float y)
