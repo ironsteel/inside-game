@@ -53,6 +53,6 @@ void TextureUtils::loadTexture(const char* textName, GLuint *g_textureID)
 		// Unload the image.
 		// and free the bit data.
 		FreeImage_Unload(dib);
-		delete bits;
+		delete[] bits;
 	}
 }
