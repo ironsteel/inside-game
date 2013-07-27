@@ -15,7 +15,7 @@ class ShaderProgram
 
 public:
     ShaderProgram(GLuint vertexShader, GLuint fragmentShader);
-    virtual ~ShaderProgram() { }
+    virtual ~ShaderProgram() {}
 		
 		virtual bool link();
 		GLint getAttributeLocation(const string& attributeName);
@@ -25,8 +25,10 @@ public:
 protected:
     virtual bool initUniformLocations();
     virtual bool initAttributeLocations();
-    
-    
+
+private:
+	bool initUniform(std::string name);
+	bool initAttribute(std::string name);
 
 private:
     GLuint mVertexShader;

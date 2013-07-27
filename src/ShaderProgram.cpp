@@ -16,6 +16,7 @@ bool ShaderProgram::link()
     
     glBindAttribLocation(mShaderProgramObject, 0, a_Position.c_str());
     glBindAttribLocation(mShaderProgramObject, 1, a_TexCoords.c_str());
+	glBindAttribLocation(mShaderProgramObject, 2, a_Normal.c_str());
     
     glLinkProgram(mShaderProgramObject);
 
@@ -60,51 +61,46 @@ GLint ShaderProgram::getUniformLocation(const string& uniformName)
 
 bool ShaderProgram::initUniformLocations()
 {
-	GLint mvp = glGetUniformLocation(mShaderProgramObject, u_ModelViewProjection.c_str());
-	if(mvp == -1) {
-		printf("Cannot find %s", u_ModelViewProjection.c_str());
-		return false;
-	}
 	
-	uniforms[u_ModelViewProjection] = mvp;
-	
-	GLint sampler = glGetUniformLocation(mShaderProgramObject, u_Sampler.c_str());
-	if(sampler == -1) {
-		printf("Cannot find %s", u_Sampler.c_str());
-		return false;
-	}
-	uniforms[u_Sampler] = sampler;
-	
-	
-	
-	GLint selected = glGetUniformLocation(mShaderProgramObject, u_Selected.c_str());
-	if(selected == -1) {
-		printf("Cannot find %s", u_Selected.c_str());
-		return false;
-	}
-	uniforms[u_Selected] = selected;
+	initUniform(u_ModelViewProjection);
+	initUniform(u_lightPosition);
+	initUniform(u_NormalMatrix);
+	initUniform(u_Sampler);
+	initUniform(u_modelMatrix);
 	
 	return true;
 	
+}
+bool ShaderProgram::initUniform(std::string name)
+{
+	GLint uniformLocation = glGetUniformLocation(mShaderProgramObject, name.c_str());
+	if(uniformLocation == -1) {
+		printf("Cannot find %s", name.c_str());
+		return false;
+	}
+	uniforms[name] = uniformLocation;
+	return true;
 }
 
 bool ShaderProgram::initAttributeLocations()
 {
 	
-	GLint pos = glGetAttribLocation(mShaderProgramObject, a_Position.c_str());
-	if(pos == -1) {
-        printf("Cannot find %s", a_Position.c_str());
-        return false;
-    }
-	attributes[a_Position] =  pos;
-
-	GLint textureCoords = glGetAttribLocation(mShaderProgramObject, a_TexCoords.c_str());
-	if(textureCoords == -1) {
-        printf("Cannot find %s", a_TexCoords.c_str());
-        return false;
-    }
-    attributes[a_TexCoords] = textureCoords;
+	initAttribute(a_Position);
+	initAttribute(a_TexCoords);
+	initAttribute(a_Normal);
+	
     return true;
+}
+
+bool ShaderProgram::initAttribute(std::string name)
+{
+	GLint pos = glGetAttribLocation(mShaderProgramObject, name.c_str());
+	if(pos == -1) {
+		printf("Cannot find %s", name.c_str());
+		return false;
+	}
+	attributes[name] =  pos;
+	return true;
 }
 
 

@@ -39,26 +39,7 @@ static void animate(double timeSinceLastFrame)
 /* change view angle, exit upon ESC */
 void key( GLFWwindow* window, int k, int action, int a, int b )
 {
-	if( action != GLFW_PRESS ) return;
-	
-    
-	switch (k) {
-		case GLFW_KEY_Z:
-			break;
-		case GLFW_KEY_ESCAPE:
-			glfwSetWindowShouldClose(window, GL_TRUE);
-			break;
-		case GLFW_KEY_UP:
-			break;
-		case GLFW_KEY_DOWN:
-			break;
-		case GLFW_KEY_LEFT:
-			break;
-		case GLFW_KEY_RIGHT:
-			break;
-		default:
-			return;
-	}
+	app.onKeyPressed(k);
 }
 
 

@@ -32,19 +32,34 @@ GameBoard::~GameBoard()
 
 void GameBoard::draw(ShaderProgram* program, glm::mat4& viewProjection)
 {
+	GLint ligtPositionId = program->getUniformLocation(u_lightPosition);
+	glUniform3f(ligtPositionId, ligtx, ligty, ligtz);
+	
 	GLint vertIdx = program->getAttributeLocation(a_Position);
 	GLint texCoords = program->getAttributeLocation(a_TexCoords);
-	
-	mCubeGeometry->bindBuffers(vertIdx, texCoords);
+	GLint normalsIds =  program->getAttributeLocation(a_Normal);
+	GLint normalMatrixId = program->getUniformLocation(u_NormalMatrix);
+	GLint modelMatrixId = program->getUniformLocation(u_modelMatrix);
+	mCubeGeometry->bindBuffers(vertIdx, texCoords, normalsIds);
 	
 	for(size_t i = 0; i < mCubes.size(); i++) {
 		glm::mat4 mvp = viewProjection * mTransofm * mCubes[i]->getTransform();
+		glm::mat4 model = mTransofm * mCubes[i]->getTransform();
+		glm::mat3 normalMatrix = glm::inverseTranspose(glm::mat3(model));
+		glUniformMatrix3fv(normalMatrixId, 1, GL_FALSE, glm::value_ptr(normalMatrix));
+		glUniformMatrix4fv(modelMatrixId, 1, GL_FALSE, glm::value_ptr(normalMatrix));
 		internalDraw(program, mvp, mCubes[i]);
 	}
 	
-	mCubeGeometry->unbind(vertIdx, texCoords);
+	mCubeGeometry->unbind(vertIdx, texCoords, normalsIds);
 }
 
+void GameBoard::moveLight(float x, float y, float z) 
+{
+	ligtx += x;
+	ligty += y;
+	ligtz += z;
+}
 
 void GameBoard::internalDraw(ShaderProgram* program, const glm::mat4& mvp, Cube* cube)
 {

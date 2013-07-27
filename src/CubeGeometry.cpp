@@ -11,7 +11,7 @@ CubeGeometry::CubeGeometry() : mCubeVertices(0)
 
 }
 
-void CubeGeometry::bindBuffers(GLint vertexId, GLint textureCoordsId)
+void CubeGeometry::bindBuffers(GLint vertexId, GLint textureCoordsId, GLint normalsId)
 {
 	glEnableVertexAttribArray(vertexId);
 	// Describe our vertices array to OpenGL (it can't guess its format automatically)
@@ -36,15 +36,28 @@ void CubeGeometry::bindBuffers(GLint vertexId, GLint textureCoordsId)
 	0                   // offset of first element
 	);
 	
+	glEnableVertexAttribArray(normalsId);
+	// Describe our vertices array to OpenGL (it can't guess its format automatically)
+	glBindBuffer(GL_ARRAY_BUFFER, mVboIds[4]);
+	glVertexAttribPointer(
+		normalsId, // attribute
+		3,                 // number of elements per vertex, here (x,y,z)
+	GL_FLOAT,          // the type of each element
+	GL_FALSE,          // take our values as-is
+	0,                 // no extra data between each position
+	0                  // offset of first element
+	);
+	
 	
 	/* Push each element in buffer_vertices to the vertex shader */
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mVboIds[2]);
 }
 
-void CubeGeometry::unbind(GLint vertexId, GLint textureCoordsId)
+void CubeGeometry::unbind(GLint vertexId, GLint textureCoordsId, GLint normalsId)
 {
 	glDisableVertexAttribArray(vertexId);
 	glDisableVertexAttribArray(textureCoordsId);
+	glDisableVertexAttribArray(normalsId);
 }
 
 void CubeGeometry::draw()
@@ -112,7 +125,7 @@ void CubeGeometry::initGeometry()
 		1.0,  1.0, -1.0,
 		1.0,  1.0,  1.0,
 	};
-	glGenBuffers(3, mVboIds);
+	glGenBuffers(4, mVboIds);
 	glBindBuffer(GL_ARRAY_BUFFER,  mVboIds[0]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW);
 	
@@ -156,11 +169,47 @@ void CubeGeometry::initGeometry()
 	memcpy(mCubeElements, cube_elements, sizeof(cube_elements));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mVboIds[2]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_elements), cube_elements, GL_STATIC_DRAW);
+	
+	GLfloat cube_normals[] = {
+		// front
+		0.0, 0.0,  1.0,
+		0.0, 0.0,  1.0,
+		0.0, 0.0,  1.0,
+		0.0, 0.0,  1.0,
+		// top
+		0.0,  1.0,  0.0,
+		0.0,  1.0,  0.0,
+		0.0,  1.0,  0.0,
+		0.0,  1.0,  0.0,
+		// back
+		0.0, 0.0, -1.0,
+		0.0, 0.0, -1.0,
+		0.0, 0.0, -1.0,
+		0.0, 0.0, -1.0,
+		// bottom
+		0.0, -1.0, 0.0,
+		0.0, -1.0, 0.0,
+		0.0, -1.0, 0.0,
+		0.0, -1.0, 0.0,
+		// left
+		-1.0, 0.0, 0.0,
+		-1.0, 0.0, 0.0,
+		-1.0, 0.0, 0.0,
+		-1.0, 0.0, 0.0,
+		// right
+		1.0, 0.0,  0.0,
+		1.0, 0.0,  0.0,
+		1.0, 0.0,  0.0,
+		1.0, 0.0,  0.0,
+	};
+	glBindBuffer(GL_ARRAY_BUFFER,  mVboIds[4]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_normals), cube_normals, GL_STATIC_DRAW);
+	
 }
 
 CubeGeometry::~CubeGeometry()
 {
    free(mCubeVertices);
    free(mCubeElements);
-   glDeleteBuffers(3, mVboIds);
+   glDeleteBuffers(4, mVboIds);
 }

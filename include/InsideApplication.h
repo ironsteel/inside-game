@@ -22,7 +22,7 @@ public:
 	void update(double timeSinceLastFrame);
 	
 	void reshape(int width, int height);
-	void onKeyPressed();
+	void onKeyPressed(int key);
 	
 	void onPointerDown(int left, int right, double x, double y);
 	void onPointerMoved(double x, double y);

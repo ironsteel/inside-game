@@ -62,9 +62,24 @@ void InsideApplication::reshape(int width, int height)
 	mProjectionTransform = glm::perspective(45.0, (double) width / height, 0.1, 100.0);
 }
 
-void InsideApplication::onKeyPressed()
+void InsideApplication::onKeyPressed(int key)
 {
-	
+	switch (key) {
+		case 265:
+			mGameBoard->moveLight(0, 1, 0);
+			break;
+		case 264:
+			mGameBoard->moveLight(0, -1, 0);
+			break;
+		case 263:
+			mGameBoard->moveLight(0, 0, 1);
+			break;
+		case 262:
+			mGameBoard->moveLight(0, 0, -1);
+			break;
+		default:
+			return;
+	}
 }
 
 void InsideApplication::onPointerDown(int left, int right, double x, double y)
