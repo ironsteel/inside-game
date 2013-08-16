@@ -8,7 +8,10 @@ find_package(OpenGL REQUIRED)
 find_package(GLFW REQUIRED)
 find_package(FreeImage REQUIRED)
 
-set(CMAKE_CXX_FLAGS "-O2 -Wall -Wextra ")
+set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -pedantic -fPIC" )
+
+set(CMAKE_BUILD_TYPE Debug CACHE STRING "default to debug" FORCE)
+
 SET(LIBRARIES ${GLFW_LIBRARY} ${OPENGL_LIBRARY} ${FREEIMAGE_LIBRARY})
 
 
