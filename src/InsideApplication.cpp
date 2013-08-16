@@ -4,10 +4,15 @@
 #include "TextureUtils.h"
 #include "ShaderManager.h"
 #include <math.h>
+#include "ResourceManager.h"
+#include "DefaultResourceProvider.h"
 
 InsideApplication::InsideApplication()
 {
 	mGameBoard = new GameBoard();
+	ResourceManager& resManager = ResourceManager::getInstance();
+	resManager.setBaseDirectory("../resources/");
+	resManager.setResourceProvider(new DefaultResourceProvider());
 }
 
 InsideApplication::~InsideApplication()
@@ -19,8 +24,8 @@ InsideApplication::~InsideApplication()
 void InsideApplication::init()
 {
 	mShaderProgram = ShaderManager::getInstance().createShaderProgram("simple",
-																	  "../resources/shaders/simple.vsh",
-																      "../resources/shaders/simple.fsh");
+																	  "shaders/simple.vsh",
+																      "shaders/simple.fsh");
 	
 	TextureUtils::loadTexture("../resources/textures/wood.jpg", &mTextureHandle);
 	

@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <fstream>
 #include <sstream>
+#include "ResourceManager.h"
 
 bool loadShaderFromFile(const char *path, std::string& out) {
     std::ifstream file;
@@ -31,16 +32,15 @@ GLuint compileShader(const char *path, GLenum shaderType)
     GLuint shader;
     GLint compiled;
     
-	std::string shaderSrc;
-    loadShaderFromFile(path, shaderSrc);
+	
+	char *src = ResourceManager::getInstance().getFileBuffer(path);
 
     shader = glCreateShader(shaderType);
 
     if(shader == 0)
         return 0;
-
-	const char *str = shaderSrc.c_str();
-    glShaderSource(shader, 1,  &str, NULL);
+	glShaderSource(shader, 1, const_cast<const GLchar* const*>(&src), NULL);
+	free(src);
     glCompileShader(shader);
 
     glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);

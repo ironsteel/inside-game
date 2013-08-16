@@ -30,8 +30,3 @@ ShaderProgram* ShaderManager::get(std::string& shaderProgramName)
 }
 
 
-ShaderManager& ShaderManager::getInstance()
-{
-	static ShaderManager shaderManager;
-	return shaderManager;
-}
