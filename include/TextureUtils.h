@@ -13,6 +13,7 @@ class TextureUtils
 
 public:
 	static void loadTexture(const char* textName, GLuint *g_textureID);
+	static bool loadPngImage(const char *name, int &outWidth, int &outHeight, bool &outHasAlpha, GLubyte **outData);
 	
 };
 
