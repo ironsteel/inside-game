@@ -8,6 +8,7 @@
 #include <fnmatch.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "DefaultResourceProvider.h"
 
@@ -22,10 +23,11 @@ char* DefaultResourceProvider::getFileBuffer(const char *filePath)
 	fseek(file, 0, SEEK_SET);
 	
 	
-	char* buffer = (char*) malloc(size);
+	char* buffer = (char*) malloc(size+1);
+	
+	buffer[size] = '\0';
 	
 	const size_t size_read = fread((void *)buffer, sizeof(char), size, file);
 	fclose(file);
-	
 	return buffer;
 }
