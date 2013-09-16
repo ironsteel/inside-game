@@ -8,6 +8,10 @@ The game is in really early stage of development and the code isn't very nice at
 So far you can place cubes on the board with one magor bug, 
 you can place a cube that has no standing cubes below it.
 
+## Screenshots
+
+There are screen shots in the screenshots/ directory.
+
 ## Implementation
 
 I'm using OpenGL ES2 for the rendering, glm for math related things, 
