@@ -24,22 +24,22 @@ public:
 	void draw(ShaderProgram* program, glm::mat4& viewProjection);
 	void update(double time);
 	void internalDraw(ShaderProgram* program, const glm::mat4& mvp, Cube* cube);
-    void intersect(glm::mat4 viewProjection, glm::vec3 mRayDirection, glm::vec3 mRayPos);
+    void intersect(glm::mat4& viewProjection, glm::vec3& mRayDirection, glm::vec3& mRayPos);
 	glm::mat4& getTransform();
 	void moveLight(float x, float y, float z);
 	
 private:
-	void buildNextBoardLevel(float startFrom, int level);
+	void buildNextBoardLevel(std::list<Cube*>& which, float startFrom, int level);
 	
 	
 private:
 	glm::mat4 mTransofm;
 	CubeGeometry* mCubeGeometry;
-	std::vector<Cube*> mCubes;
+	std::list<Cube*> mCubes;
 	std::list<Cube*> mNotVisibleCubes;
 	float ligtx = 5;
-	float ligty = 5;
-	float ligtz = 5;
+	float ligty = 70;
+	float ligtz = 20;
 
 };
 
