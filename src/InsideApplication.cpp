@@ -27,7 +27,7 @@ void InsideApplication::init()
 																	  "shaders/simple.vsh",
 																      "shaders/simple.fsh");
 	
-	TextureUtils::loadTexture("../resources/textures/wood.jpg", &mTextureHandle);
+	TextureUtils::loadTexture("../resources/textures/wood.png", &mTextureHandle);
 	
 	mGameBoard->initGeometry();
 	
@@ -49,7 +49,7 @@ void InsideApplication::drawOneFrame()
 	GLint textureLocation = mShaderProgram->getUniformLocation(u_Sampler);
 	glUniform1i(textureLocation, 0);
 	
-	glm::mat4 mvp = mProjectionTransform * mViewTransform ;
+	glm::mat4 mvp = mProjectionTransform * mViewTransform;
 	mGameBoard->draw(mShaderProgram,  mvp);
 	
 }
