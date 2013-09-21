@@ -39,21 +39,18 @@ static double getCurrentTime()
 	return ((start.tv_sec * 1000) + (start.tv_usec / 1000.0));
 }
 
-/* OpenGL draw function & timing */
 static void draw(void)
 {
 	app.drawOneFrame();
 }
 
 
-/* update animation parameters */
 static void animate(double timeSinceLastFrame)
 {
 	app.update(timeSinceLastFrame);
 }
 
 
-/* change view angle, exit upon ESC */
 void key( GLFWwindow* window, int k, int action, int a, int b )
 {
 	app.onKeyPressed(k);
@@ -74,12 +71,23 @@ static void init(int argc, char *argv[])
 }
 
 
-static void mouse_down(GLFWwindow *window, int x, int y, int i)
+static void mouse_down(GLFWwindow *window, int button, int pressed, int flags)
 {
 	double cursorX, cursorY;
 	glfwGetCursorPos(window, &cursorX, &cursorY);
 	
-	app.onPointerDown(x, y, cursorX, cursorY);
+	MouseButton btn;
+	if(button == GLFW_MOUSE_BUTTON_LEFT)
+		btn = LEFT;
+	else if(button == GLFW_MOUSE_BUTTON_RIGHT)
+		btn = RIGHT;
+	
+	if(pressed == GLFW_PRESS) {
+		app.onPointerDown(btn, cursorX, cursorY);
+	} else if(pressed == GLFW_RELEASE) {
+		app.onPointerUp(btn, cursorX, cursorY);
+	}
+	
 }
 
 static void cursor_moved(GLFWwindow *window, double x, double y) 

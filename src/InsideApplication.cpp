@@ -86,40 +86,24 @@ void InsideApplication::reshape(int width, int height)
 
 void InsideApplication::onKeyPressed(int key)
 {
-	switch (key) {
-		case 265:
-			mGameBoard->moveLight(0, 1, 0);
-			break;
-		case 264:
-			mGameBoard->moveLight(0, -1, 0);
-			break;
-		case 263:
-			mGameBoard->moveLight(0, 0, 1);
-			break;
-		case 262:
-			mGameBoard->moveLight(0, 0, -1);
-			break;
-		default:
-			return;
+	
+}
+
+void InsideApplication::onPointerDown(MouseButton button, double x, double y)
+{
+	mLastXPos = mCurrentXPos = x;
+	mLastYPos = mCurYPos = y;
+	mLeftPressed = (button == LEFT);
+}
+
+void InsideApplication::onPointerUp(MouseButton button, double cursorX, double cursorY) 
+{
+    
+	if(button == LEFT) {
+		doSelection((float)cursorX, (float)cursorY);
+		mLeftPressed = false;
 	}
 }
-
-void InsideApplication::onPointerDown(int left, int right, double x, double y)
-{
-	mLeftPressed = (right == 1);
-	if(mLeftPressed) {
-		mLastXPos = mCurrentXPos = x;
-		mLastYPos = mCurYPos = y;
-		doSelection((float)x, (float)y);
-		findIntersection();
-	}
-}
-
-void InsideApplication::findIntersection()
-{
-	mGameBoard->intersect(mViewTransform, mRayDirection, mRayPos);
-}
-
 void InsideApplication::doSelection(float x, float y)
 {
 	
@@ -138,6 +122,8 @@ void InsideApplication::doSelection(float x, float y)
 	mRayPos = glm::vec3(worldSpaceNear.x, worldSpaceNear.y, worldSpaceNear.z);
 	mRayDirection = glm::vec3(worldSpaceFar.x - worldSpaceNear.x, worldSpaceFar.y - worldSpaceNear.y, worldSpaceFar.z - worldSpaceNear.z);
 	mRayDirection = glm::normalize(mRayDirection);
+	
+	mGameBoard->intersect(mViewTransform, mRayDirection, mRayPos);
 }
 
 void InsideApplication::onPointerMoved(double x, double y)

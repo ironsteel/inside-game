@@ -25,6 +25,12 @@
 class GameBoard;
 class ShaderProgram;
 
+typedef enum 
+{
+	LEFT,
+	RIGHT
+} MouseButton;
+
 
 class InsideApplication
 {
@@ -41,12 +47,14 @@ public:
 	void reshape(int width, int height);
 	void onKeyPressed(int key);
 	
-	void onPointerDown(int left, int right, double x, double y);
+	void onPointerDown(MouseButton button, double x, double y);
+	void onPointerUp(MouseButton button, double cursorX, double cursorY);
+	
 	void onPointerMoved(double x, double y);
+	
 	
 private:
 	void doSelection(float x, float y);
-    void findIntersection();
 
 	
 	
@@ -60,9 +68,9 @@ private:
 	int mScreenHeight;
 	bool mLeftPressed;
 	
-	float mLastXPos ,mCurrentXPos;
+	float mLastXPos, mCurrentXPos;
 	
-    float mLastYPos , mCurYPos;
+    float mLastYPos, mCurYPos;
     glm::detail::tvec3< glm::mediump_float > mLookAt;
     glm::detail::tvec3< glm::mediump_float > mPosition;
     glm::detail::tvec3< glm::mediump_float > mCameraUp;
