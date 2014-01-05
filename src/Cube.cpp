@@ -21,7 +21,7 @@
 
 #include "Cube.h"
 #include <glm/gtc/matrix_transform.hpp>
-
+#include <iostream>
 Cube::Cube(glm::vec3 &pos) :mTransform(glm::mat4(1.0)), mSelected(false)
 {
 	mTransform = glm::translate(mTransform, pos);
@@ -37,3 +37,15 @@ glm::mat4& Cube::getTransform()
 {
 	return mTransform;
 }
+
+bool Cube::hasBase()
+{
+	for(int i = 0; i < n.size(); i++) {
+		Cube* c = n[i];
+		if(!c->mSelected)
+			return false;
+	}
+	std::cout << "ALL VISIBLE\n";
+	return true;
+}
+

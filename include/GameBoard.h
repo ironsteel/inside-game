@@ -42,13 +42,13 @@ public:
 	void initGeometry();
 	void draw(ShaderProgram* program, glm::mat4 viewProjection);
 	void update(double time);
-	void internalDraw(ShaderProgram* program, const glm::mat4& mvp, Cube* cube);
+	void internalDraw(ShaderProgram* program, const glm::mat4& mvp);
 	void intersect(glm::mat4& viewProjection, Ray& ray);
 	glm::mat4& getTransform();
 	void moveLight(float x, float y, float z);
 	
 private:
-	void buildNextBoardLevel(std::list<Cube*>& which, float startFrom, int level);
+	void buildNextBoardLevel(std::list<Cube*>& which, float startFrom, int level, bool selected);
 	
 	
 private:
@@ -56,6 +56,8 @@ private:
 	CubeGeometry* mCubeGeometry;
 	std::list<Cube*> mCubes;
 	std::list<Cube*> mNotVisibleCubes;
+	
+	std::vector< std::vector<Cube*> > mNeighbours;
 	float ligtx = 5;
 	float ligty = 70;
 	float ligtz = 20;

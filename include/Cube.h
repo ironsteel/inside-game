@@ -23,6 +23,8 @@
 #define CUBE_H
 
 #include <glm/glm.hpp>
+#include <vector>
+
 
 class Cube
 {
@@ -33,6 +35,10 @@ public:
 	glm::mat4& getTransform();
 	
 	bool mSelected;
+	
+	std::vector< Cube* > n;
+	
+	bool hasBase();
 	
 private:
 	glm::mat4 mTransform;
