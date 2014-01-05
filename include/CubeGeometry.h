@@ -29,6 +29,8 @@
 #include <stdlib.h>
 #include <glm/glm.hpp>
 
+class Ray;
+
 class CubeGeometry
 {
 public:
@@ -38,7 +40,7 @@ public:
 	void bindBuffers(GLint vertexId, GLint textureCoordsId, GLint normalsId);
 	void unbind(GLint vertexId, GLint textureCoordsId, GLint normalsId);
 	void draw();
-    bool intersect(glm::mat4 &mvp, glm::vec3 &mRayDirection, glm::vec3 &mRayPos);
+	bool intersect(glm::mat4& mvp, Ray& ray);
 	
 private:
 	GLuint mVboIds[4];

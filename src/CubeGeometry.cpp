@@ -20,6 +20,7 @@
  */
 
 #include "CubeGeometry.h"
+#include "Ray.h"
 #include <glm/ext.hpp>
 
 
@@ -82,7 +83,7 @@ void CubeGeometry::draw()
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
 }
 
-bool CubeGeometry::intersect(glm::mat4 &mvp, glm::vec3 &mRayDirection, glm::vec3 &mRayPos) 
+bool CubeGeometry::intersect(glm::mat4& mvp, Ray& ray) 
 {
 	
 	glm::vec3 bary;
@@ -100,7 +101,7 @@ bool CubeGeometry::intersect(glm::mat4 &mvp, glm::vec3 &mRayDirection, glm::vec3
 			verts[j] = trangleVerts.xyz();
 			
 		}
-		if(glm::intersectRayTriangle(mRayPos, mRayDirection, verts[0], verts[1], verts[2], bary)) {
+		if(glm::intersectRayTriangle(ray.mPosition, ray.mDirection, verts[0], verts[1], verts[2], bary)) {
 			return true;
 		}
 	}
@@ -160,6 +161,7 @@ void CubeGeometry::initGeometry()
 		memcpy(&cube_texcoords[i*4*2], &cube_texcoords[0], 2*4*sizeof(GLfloat));
 	glBindBuffer(GL_ARRAY_BUFFER, mVboIds[1]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_texcoords), cube_texcoords, GL_STATIC_DRAW);
+	
 	
 	GLushort cube_elements[] = {
 		// front

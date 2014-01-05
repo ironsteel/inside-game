@@ -19,7 +19,6 @@
  *
  */
 
-#include <FreeImage.h>
 #include <GLES2/gl2.h>
 
 #ifndef TEXTUREUTILS_H

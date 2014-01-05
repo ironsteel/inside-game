@@ -23,6 +23,7 @@
 #include "ShaderProgram.h"
 #include "CubeGeometry.h"
 #include "Cube.h"
+#include "Ray.h"
 
 GameBoard::GameBoard() : 
 	mCubeGeometry(new CubeGeometry()), 
@@ -44,9 +45,11 @@ GameBoard::~GameBoard()
 		delete mNotVisibleCubes.front();
 		mNotVisibleCubes.pop_front();
 	}
+	
+	delete mCubeGeometry;
 }
 
-void GameBoard::draw(ShaderProgram* program, glm::mat4& viewProjection)
+void GameBoard::draw(ShaderProgram* program, glm::mat4 viewProjection)
 {
 	GLint ligtPositionId = program->getUniformLocation(u_lightPosition);
 	glUniform3f(ligtPositionId, ligtx, ligty, ligtz);
@@ -90,14 +93,14 @@ void GameBoard::update(double time)
 	
 }
 
-void GameBoard::intersect(glm::mat4& viewProjection, glm::vec3& mRayDirection, glm::vec3& mRayPos) 
+void GameBoard::intersect(glm::mat4& viewProjection, Ray& ray) 
 {
 	
 	for (list<Cube*>::iterator ci = mNotVisibleCubes.begin(); ci != mNotVisibleCubes.end(); ++ci)
 	{
 		glm::mat4 mvp =  mTransofm * (*ci)->getTransform();
 		bool selected = (*ci)->mSelected;
-		if(!selected && mCubeGeometry->intersect(mvp, mRayDirection, mRayPos)) {
+		if(!selected && mCubeGeometry->intersect(mvp, ray)) {
 			(*ci)->mSelected = !(*ci)->mSelected;
 			mCubes.push_back(*ci);
 			mNotVisibleCubes.erase(ci);

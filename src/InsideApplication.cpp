@@ -23,6 +23,9 @@
 #include <math.h>
 #include "ResourceManager.h"
 #include "DefaultResourceProvider.h"
+#include "Camera.h"
+#include "Ray.h"
+
 
 InsideApplication::InsideApplication()
 {
@@ -30,12 +33,15 @@ InsideApplication::InsideApplication()
 	ResourceManager& resManager = ResourceManager::getInstance();
 	resManager.setBaseDirectory("../resources/");
 	resManager.setResourceProvider(new DefaultResourceProvider());
+	mCamera = new Camera(glm::vec3(0, 0, 0), glm::vec3(0, 20, -20), glm::vec3(0, 1, 0));
 }
 
 InsideApplication::~InsideApplication()
 {
+	glDeleteTextures(1, &mTextureHandle);
 	delete mGameBoard;
 	delete mShaderProgram;
+	delete mCamera;
 }
 
 void InsideApplication::init()
@@ -47,12 +53,7 @@ void InsideApplication::init()
 	TextureUtils::loadTexture("../resources/textures/wood.png", &mTextureHandle);
 	
 	mGameBoard->initGeometry();
-	
-	mLookAt = glm::vec3(0, 20, -20);
-	mPosition = glm::vec3(0, 0, 0);
-	mCameraUp = glm::vec3(0, 1, 0);
-	mViewTransform = glm::lookAt(mLookAt, mPosition, mCameraUp);
- 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
 }
 
 void InsideApplication::drawOneFrame()
@@ -66,8 +67,7 @@ void InsideApplication::drawOneFrame()
 	GLint textureLocation = mShaderProgram->getUniformLocation(u_Sampler);
 	glUniform1i(textureLocation, 0);
 	
-	glm::mat4 mvp = mProjectionTransform * mViewTransform;
-	mGameBoard->draw(mShaderProgram,  mvp);
+	mGameBoard->draw(mShaderProgram,  mCamera->getViewProjection());
 	
 }
 
@@ -78,10 +78,7 @@ void InsideApplication::update(double timeSinceLastFrame)
 
 void InsideApplication::reshape(int width, int height)
 {
-	glViewport(0, 0, width, height);
-	mScreenWidth = width;
-	mScreenHeight = height;
-	mProjectionTransform = glm::perspective(45.0, (double) width / height, 0.1, 100.0);
+	mCamera->windowSizeChanged(width, height);
 }
 
 void InsideApplication::onKeyPressed(int key)
@@ -106,24 +103,8 @@ void InsideApplication::onPointerUp(MouseButton button, double cursorX, double c
 }
 void InsideApplication::doSelection(float x, float y)
 {
-	
-	float mouseX = x;
-	float mouseY = mScreenHeight - y;
-	glm::vec3 worldSpaceNear = glm::unProject(glm::vec3(mouseX, mouseY, 0.0),
-											  mViewTransform, 
-											  mProjectionTransform, 
-											  glm::vec4(0, 0, mScreenWidth, mScreenHeight));
-	glm::vec3 worldSpaceFar = glm::unProject(glm::vec3(mouseX, mouseY, 1.0),
-											 mViewTransform , 
-											 mProjectionTransform, 
-										  glm::vec4(0, 0, mScreenWidth, mScreenHeight));
-	
-	
-	mRayPos = glm::vec3(worldSpaceNear.x, worldSpaceNear.y, worldSpaceNear.z);
-	mRayDirection = glm::vec3(worldSpaceFar.x - worldSpaceNear.x, worldSpaceFar.y - worldSpaceNear.y, worldSpaceFar.z - worldSpaceNear.z);
-	mRayDirection = glm::normalize(mRayDirection);
-	
-	mGameBoard->intersect(mViewTransform, mRayDirection, mRayPos);
+	Ray ray = mCamera->getPickingRay(x, y);
+	mGameBoard->intersect(mCamera->getViewTransform(), ray);
 }
 
 void InsideApplication::onPointerMoved(double x, double y)
@@ -131,14 +112,10 @@ void InsideApplication::onPointerMoved(double x, double y)
 	mCurrentXPos = x;
 	mCurYPos = y;
 	if(mLeftPressed) {
-		if (mCurrentXPos != mLastXPos || mCurYPos != mLastYPos) {
-			mViewTransform  = glm::rotate(mViewTransform, glm::degrees(-(float)((mLastXPos - mCurrentXPos)/(mScreenWidth/4))), glm::vec3(0, 1, 0));
+ 		if (mCurrentXPos != mLastXPos || mCurYPos != mLastYPos) {
+			mCamera->rotate(-(float)((mLastXPos - mCurrentXPos)/(mCamera->mScreenWidth/4)), glm::vec3(0, 1, 0));
 			mLastXPos = mCurrentXPos;
 			mLastYPos = mCurYPos;
 		}
 	}
-	
 }
-
-
-

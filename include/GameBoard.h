@@ -25,6 +25,8 @@
 #include <glm/ext.hpp>
 #include <vector>
 #include <list>
+
+class Ray;
 class CubeGeometry;
 
 #ifndef GAMEBOARD_H
@@ -35,13 +37,13 @@ class Cube;
 class GameBoard
 {
 public:
-    GameBoard();
-    ~GameBoard();
+	GameBoard();
+	~GameBoard();
 	void initGeometry();
-	void draw(ShaderProgram* program, glm::mat4& viewProjection);
+	void draw(ShaderProgram* program, glm::mat4 viewProjection);
 	void update(double time);
 	void internalDraw(ShaderProgram* program, const glm::mat4& mvp, Cube* cube);
-    void intersect(glm::mat4& viewProjection, glm::vec3& mRayDirection, glm::vec3& mRayPos);
+	void intersect(glm::mat4& viewProjection, Ray& ray);
 	glm::mat4& getTransform();
 	void moveLight(float x, float y, float z);
 	

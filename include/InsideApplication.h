@@ -24,6 +24,7 @@
 
 class GameBoard;
 class ShaderProgram;
+class Camera;
 
 typedef enum 
 {
@@ -55,28 +56,19 @@ public:
 	
 private:
 	void doSelection(float x, float y);
-
-	
 	
 private:
 	ShaderProgram* mShaderProgram;
 	GLuint mTextureHandle;
-	glm::mat4 mViewTransform;
-	glm::mat4 mProjectionTransform;
+
+	Camera* mCamera;
 	GameBoard* mGameBoard;
-	int mScreenWidth;
-	int mScreenHeight;
+	
 	bool mLeftPressed;
 	
 	float mLastXPos, mCurrentXPos;
 	
     float mLastYPos, mCurYPos;
-    glm::detail::tvec3< glm::mediump_float > mLookAt;
-    glm::detail::tvec3< glm::mediump_float > mPosition;
-    glm::detail::tvec3< glm::mediump_float > mCameraUp;
-	
-	glm::vec3 mRayPos;
-	glm::vec3 mRayDirection;
 	
 };
 
