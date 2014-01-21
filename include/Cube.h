@@ -36,7 +36,7 @@ public:
 	
 	bool mSelected;
 	
-	std::vector< Cube* > n;
+	std::vector< Cube* > mNeighbours;
 	
 	bool hasBase();
 	

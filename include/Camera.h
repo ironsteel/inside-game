@@ -54,9 +54,9 @@ private:
 	glm::mat4 mProjectionTransform;
 	glm::mat4 mViewProjectionTransform;
 	
-	glm::detail::tvec3< glm::mediump_float > mLookAt;
-	glm::detail::tvec3< glm::mediump_float > mPosition;
-	glm::detail::tvec3< glm::mediump_float > mCameraUp;
+	glm::vec3 mLookAt;
+	glm::vec3 mPosition;
+	glm::vec3 mCameraUp;
 };
 
 #endif // CAMERA_H

@@ -40,12 +40,11 @@ glm::mat4& Cube::getTransform()
 
 bool Cube::hasBase()
 {
-	for(int i = 0; i < n.size(); i++) {
-		Cube* c = n[i];
+	for(int i = 0; i < mNeighbours.size(); i++) {
+		Cube* c = mNeighbours[i];
 		if(!c->mSelected)
 			return false;
 	}
-	std::cout << "ALL VISIBLE\n";
 	return true;
 }
 

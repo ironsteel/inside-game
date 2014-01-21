@@ -15,15 +15,13 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-/*
- *
- */
 
 #include "GameBoard.h"
 #include "ShaderProgram.h"
 #include "CubeGeometry.h"
 #include "Cube.h"
 #include "Ray.h"
+#include <iostream>
 
 GameBoard::GameBoard() : 
 	mCubeGeometry(new CubeGeometry()), 
@@ -71,24 +69,6 @@ void GameBoard::draw(ShaderProgram* program, glm::mat4 viewProjection)
 		internalDraw(program, mvp);
 	}
 	
-// 	glm::mat4 tr = glm::mat4(mTransofm);
-// 	
-// 	for(int i = 0; i < mNeighbours.size(); ++i) {
-// 		
-// 		tr = glm::translate(tr, glm::vec3(0, i * 1.8f, 0));
-// 		
-// 		std::vector<Cube*> v = mNeighbours[i];
-// 		for(int j = 0; j < v.size(); j++) {
-// 			Cube* cube = v[j];
-// 			glm::mat4 mvp = viewProjection * tr * cube->getTransform();
-// 			glm::mat4 model = tr * cube->getTransform();
-// 			glm::mat3 normalMatrix = glm::inverseTranspose(glm::mat3(model));
-// 			glUniformMatrix3fv(normalMatrixId, 1, GL_FALSE, glm::value_ptr(normalMatrix));
-// 			glUniformMatrix4fv(modelMatrixId, 1, GL_FALSE, glm::value_ptr(model));
-// 			internalDraw(program, mvp);
-// 		}
-// 	}
-// 	
 	mCubeGeometry->unbind(vertIdx, texCoords, normalsIds);
 }
 
@@ -138,94 +118,56 @@ glm::mat4& GameBoard::getTransform()
 void GameBoard::initGeometry()
 {
 	mCubeGeometry->initGeometry();
-	
-	for(int i = 0; i < 6; i++)
-	{
+	int level = 6;
+	for(int i = 0; i < level; i++) {
 		if(i == 0)
-			buildNextBoardLevel(mCubes, i * 2, 6 - i, true);
+			buildNextBoardLevel(mCubes, i * 2, level - i, true);
 		else 
-			buildNextBoardLevel(mNotVisibleCubes, i * 2, 6 - i, false);
+			buildNextBoardLevel(mNotVisibleCubes, i * 2, level - i, false);
 	}
 	
-	/*
-	buildNextBoardLevel(mCubes, 0, 6);
-	
-	buildNextBoardLevel(mNotVisibleCubes, 2, 5);
-	
-	buildNextBoardLevel(mNotVisibleCubes, 4, 4);
-	
-	buildNextBoardLevel(mNotVisibleCubes, 6, 3);
-	
-	buildNextBoardLevel(mNotVisibleCubes, 8, 2);
-	
-	buildNextBoardLevel(mNotVisibleCubes, 10, 1);*/
 }
 
 
 void GameBoard::buildNextBoardLevel(list<Cube*> &which, float startFrom, int level, bool selected) 
 {
-	std::vector<Cube* > neighbours;
+	std::vector<Cube* > currentLevelCubes;
 	float xoffset = 1.4;
 	float yoffset = 2;
 	float zoffset = 1.4;
 	
-	float x = 1.4;
-	float y = startFrom + 2;
-	float z = 1.4;
-	int row = 2;
+	float x = 0;
+	float y = startFrom;
+	float z = 0;
+	int row = 1;
 	glm::vec3 pos = glm::vec3(0, startFrom, 0);
-	Cube* cube = new Cube(pos);
-	which.push_back(cube);
-	cube->mSelected = selected;
-	if(!mNeighbours.empty() && !selected)
-	{
-		cube->n = mNeighbours[0];
-		
-		mNeighbours.erase(mNeighbours.begin());
-	}
-	neighbours.push_back(cube);
-	
-	
-	for(int i = 1; i < level; ++i) {
+	Cube* cube = NULL;
+	int indexInLevel = 0;
+	for(int i = 0; i < level; ++i) {
 		float xnew = x;
 		for(int r = 0; r < row; ++r) {
-			
 			pos = glm::vec3(xnew, y, z);
 			cube = new Cube(pos);
 			cube->mSelected = selected;
+			
+			if(!selected) {
+				vector<Cube*> neighbours;
+				neighbours.push_back(mLevels.back()[indexInLevel]);
+				neighbours.push_back(mLevels.back()[indexInLevel + row]);
+				neighbours.push_back(mLevels.back()[indexInLevel + row + 1]);
+				cube->mNeighbours = neighbours;	
+			}
 			which.push_back(cube);
+			currentLevelCubes.push_back(cube);
+			
 			xnew -= 2 * xoffset;
-			if(!mNeighbours.empty() && !selected)
-			{
-				cube->n = mNeighbours[0];
-				
-				mNeighbours.erase(mNeighbours.begin());
-			}
-			
-			
-			if(r > 0 && r < row - 1) {
-				neighbours.push_back(cube);
-				neighbours.push_back(mNeighbours.back()[1]);				
-				mNeighbours.push_back(neighbours);
-		
-				
-				neighbours.clear();
- 				neighbours.push_back(cube);
-
-			} else {
-				neighbours.push_back(cube);
-				if(r == row - 1 && neighbours.size() < 3) {
-					neighbours.push_back(mNeighbours[mNeighbours.size() - 2][2]);				
-				}
-			}
-			
+			indexInLevel++;
 		}
-		mNeighbours.push_back(neighbours);
 		
-		neighbours.clear();
 		x += xoffset;
 		y += yoffset;
 		z += zoffset;
 		row++;
 	}
+	mLevels.push_back(currentLevelCubes);
 }

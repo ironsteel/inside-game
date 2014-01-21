@@ -49,15 +49,15 @@ public:
 	
 private:
 	void buildNextBoardLevel(std::list<Cube*>& which, float startFrom, int level, bool selected);
-	
-	
+		
 private:
 	glm::mat4 mTransofm;
 	CubeGeometry* mCubeGeometry;
 	std::list<Cube*> mCubes;
 	std::list<Cube*> mNotVisibleCubes;
+	std::vector<Cube*> mAllCubes;
 	
-	std::vector< std::vector<Cube*> > mNeighbours;
+	std::vector< std::vector<Cube*> > mLevels;
 	float ligtx = 5;
 	float ligty = 70;
 	float ligtz = 20;
