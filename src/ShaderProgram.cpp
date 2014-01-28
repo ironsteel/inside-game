@@ -95,6 +95,7 @@ bool ShaderProgram::initUniformLocations()
 	initUniform(u_NormalMatrix);
 	initUniform(u_Sampler);
 	initUniform(u_modelMatrix);
+	initUniform(u_selected);
 	
 	return true;
 	
