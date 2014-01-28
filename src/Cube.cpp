@@ -38,7 +38,7 @@ glm::mat4& Cube::getTransform()
 	return mTransform;
 }
 
-bool Cube::hasBase()
+bool Cube::hasSupportingNeibours()
 {
 	for(int i = 0; i < mNeighbours.size(); i++) {
 		Cube* c = mNeighbours[i];

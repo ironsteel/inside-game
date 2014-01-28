@@ -99,7 +99,7 @@ void GameBoard::intersect(glm::mat4& viewProjection, Ray& ray)
 		glm::mat4 mvp =  mTransofm * (*ci)->getTransform();
 		bool selected = (*ci)->mSelected;
 		if(!selected && mCubeGeometry->intersect(mvp, ray)) {
-			if((*ci)->hasBase()) 
+			if((*ci)->hasSupportingNeibours()) 
 			{
 				(*ci)->mSelected = !(*ci)->mSelected;
 				mCubes.push_back(*ci);

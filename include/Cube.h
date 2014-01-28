@@ -38,7 +38,7 @@ public:
 	
 	std::vector< Cube* > mNeighbours;
 	
-	bool hasBase();
+	bool hasSupportingNeibours();
 	
 private:
 	glm::mat4 mTransform;
