@@ -133,11 +133,6 @@ void GameBoard::initGeometry()
 		else 
 			buildNextBoardLevel(mNotVisibleCubes, i * 2, level - i, false);
 	}
-	
-	for(int i = 0; i < mPyramidFaces.size(); i++) {
-		
-		cout << "Size: " << mPyramidFaces[i].size() << endl;
-	}
 }
 
 
