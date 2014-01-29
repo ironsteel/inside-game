@@ -135,6 +135,12 @@ void GameBoard::initGeometry()
 	}
 }
 
+Cube* GameBoard::addToSupportedCube(Cube* supportedCube, int index) 
+{
+	Cube* supportingCube = mLevels.back()[index];
+	supportingCube->mSupportedCubes.push_back(supportedCube);
+	return supportingCube;
+}
 
 void GameBoard::buildNextBoardLevel(list<Cube*> &which, float startFrom, int level, bool selected) 
 {
@@ -160,10 +166,10 @@ void GameBoard::buildNextBoardLevel(list<Cube*> &which, float startFrom, int lev
 			// These are the cubes that are not placed on the pyramid
 			if(!selected) {
 				vector<Cube*> neighbours;
-				neighbours.push_back(mLevels.back()[indexInLevel]);
-				neighbours.push_back(mLevels.back()[indexInLevel + row]);
-				neighbours.push_back(mLevels.back()[indexInLevel + row + 1]);
-				cube->mNeighbours = neighbours;	
+				neighbours.push_back(addToSupportedCube(cube, indexInLevel));
+				neighbours.push_back(addToSupportedCube(cube, indexInLevel + row));
+				neighbours.push_back(addToSupportedCube(cube, indexInLevel + row + 1));
+				cube->mSupportingCubes = neighbours;	
 				
 				
 				// Logic for separating the cube which
@@ -172,6 +178,7 @@ void GameBoard::buildNextBoardLevel(list<Cube*> &which, float startFrom, int lev
 				// This is the top level cube (on the apex), which has 
 				// its 3 faces visible
 				if(level == 1) {
+					cube->mOutside = true;
 					mPyramidFaces[0].push_back(cube);
 					mPyramidFaces[1].push_back(cube);
 					mPyramidFaces[2].push_back(cube);

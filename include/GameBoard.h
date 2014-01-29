@@ -49,7 +49,9 @@ public:
 	
 private:
 	void buildNextBoardLevel(std::list<Cube*>& which, float startFrom, int level, bool selected);
-		
+	
+	Cube* addToSupportedCube(Cube* supportedCube, int index);
+	
 private:
 	glm::mat4 mTransofm;
 	CubeGeometry* mCubeGeometry;

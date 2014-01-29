@@ -37,9 +37,13 @@ public:
 	bool mSelected;
 	bool mOutside;
 	
-	std::vector< Cube* > mNeighbours;
+	std::vector< Cube* > mSupportingCubes;
+	
+	std::vector< Cube* > mSupportedCubes;
 	
 	bool hasSupportingNeibours();
+	
+	Cube* getCubeForFreeSpace();
 	
 private:
 	glm::mat4 mTransform;

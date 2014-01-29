@@ -40,11 +40,21 @@ glm::mat4& Cube::getTransform()
 
 bool Cube::hasSupportingNeibours()
 {
-	for(int i = 0; i < mNeighbours.size(); i++) {
-		Cube* c = mNeighbours[i];
+	for(int i = 0; i < mSupportingCubes.size(); i++) {
+		Cube* c = mSupportingCubes[i];
 		if(!c->mSelected)
 			return false;
 	}
 	return true;
 }
 
+Cube* Cube::getCubeForFreeSpace() 
+{
+	std::cout << "Suppurted count: " << mSupportedCubes.size() << std::endl;
+	for(int i = 0; i < mSupportedCubes.size(); i++) {
+		Cube* c = mSupportedCubes[i];
+		if(c->hasSupportingNeibours()) 
+			return c;
+	}
+	return NULL;
+}
