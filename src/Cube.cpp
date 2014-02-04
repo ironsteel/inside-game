@@ -22,7 +22,7 @@
 #include "Cube.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
-Cube::Cube(glm::vec3 &pos) :mTransform(glm::mat4(1.0)), mSelected(false), mOutside(false)
+Cube::Cube(glm::vec3 &pos) :mTransform(glm::mat4(1.0)), mSelected(false)
 {
 	mTransform = glm::translate(mTransform, pos);
 	mTransform = glm::rotate(mTransform, 45.0f, glm::vec3(0, 1, 0));
@@ -50,7 +50,6 @@ bool Cube::hasSupportingNeibours()
 
 Cube* Cube::getCubeForFreeSpace() 
 {
-	std::cout << "Suppurted count: " << mSupportedCubes.size() << std::endl;
 	for(int i = 0; i < mSupportedCubes.size(); i++) {
 		Cube* c = mSupportedCubes[i];
 		if(c->hasSupportingNeibours()) 

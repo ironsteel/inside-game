@@ -35,7 +35,6 @@ public:
 	glm::mat4& getTransform();
 	
 	bool mSelected;
-	bool mOutside;
 	
 	std::vector< Cube* > mSupportingCubes;
 	

@@ -70,10 +70,8 @@ void GameBoard::draw(ShaderProgram* program, glm::mat4 viewProjection)
 		glm::mat4 mvp = viewProjection * mTransofm * (*ci)->getTransform();
 		glm::mat4 model = mTransofm * (*ci)->getTransform();
 		glm::mat3 normalMatrix = glm::inverseTranspose(glm::mat3(model));
-		glUniform1i(selectedId, (*ci)->mOutside);
 		glUniformMatrix3fv(normalMatrixId, 1, GL_FALSE, glm::value_ptr(normalMatrix));
 		glUniformMatrix4fv(modelMatrixId, 1, GL_FALSE, glm::value_ptr(model));
-		
 		internalDraw(program, mvp);
 	}
 	
@@ -178,7 +176,6 @@ void GameBoard::buildNextBoardLevel(list<Cube*> &which, float startFrom, int lev
 				// This is the top level cube (on the apex), which has 
 				// its 3 faces visible
 				if(level == 1) {
-					cube->mOutside = true;
 					mPyramidFaces[0].push_back(cube);
 					mPyramidFaces[1].push_back(cube);
 					mPyramidFaces[2].push_back(cube);
@@ -189,12 +186,10 @@ void GameBoard::buildNextBoardLevel(list<Cube*> &which, float startFrom, int lev
 						mPyramidFaces[0].push_back(cube);
 						mPyramidFaces[1].push_back(cube);
 					}
-					cube->mOutside = true;
 					
 				} else if(i == level-1) {
 					// These are the cubes that lay on the 
 					// north side of the pyramid
-					cube->mOutside = true;
 					
 					// This cube is also lays on the east side
 					if(r == 0) {
@@ -211,11 +206,9 @@ void GameBoard::buildNextBoardLevel(list<Cube*> &which, float startFrom, int lev
 					if(r == 0) {
 						// If its the first cube in the row it lays
 						// on the east side
-						cube->mOutside = true;
 						mPyramidFaces[1].push_back(cube);
 					} else if(r == row - 1) {
 						// Else it lays on the west side
-						cube->mOutside = true;
 						mPyramidFaces[0].push_back(cube);
 					}
 				} 

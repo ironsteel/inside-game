@@ -6,7 +6,6 @@ project(inside-game)
  
 find_package(OpenGL REQUIRED)
 find_package(GLFW REQUIRED)
-find_package(FreeImage REQUIRED)
 find_package(PNG REQUIRED)
 
 set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -pedantic -fPIC" )
