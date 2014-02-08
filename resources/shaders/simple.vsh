@@ -1,3 +1,4 @@
+#version 100
 attribute vec4 position;
 attribute vec2 atexcoord;
 attribute vec3 normal;

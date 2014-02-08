@@ -1,3 +1,4 @@
+#version 100
 precision mediump float;
 
 varying vec2 v_texCoord;
@@ -17,5 +18,5 @@ void main()
 	* max(0.0, dot(v_normal, v_lightPosition));
 
 	
-	gl_FragColor = vec4(diffuseReflection, 1.0) * 2.0;
+	gl_FragColor = vec4(diffuseReflection, 1.0) * 1.2f;
 }
