@@ -15,9 +15,8 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-/*
- *
- */
+
+#define GLM_FORCE_RADIANS
 
 #include "CubeGeometry.h"
 #include "Ray.h"

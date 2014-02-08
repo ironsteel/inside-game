@@ -17,6 +17,8 @@
  *
  */
 
+#define GLM_FORCE_RADIANS
+
 #include "Camera.h"
 #include <Ray.h>
 #include <glm/ext.hpp>
@@ -35,7 +37,7 @@ void Camera::windowSizeChanged(int width, int height)
 	glViewport(0, 0, width, height);
 	mScreenWidth = width;
 	mScreenHeight = height;
-	mProjectionTransform = glm::perspective(mFov, (double) mScreenWidth / mScreenHeight, mNear, mFar);
+	mProjectionTransform = glm::perspective(glm::radians(mFov), (double) mScreenWidth / mScreenHeight, mNear, mFar);
 }
 
 void Camera::setPosition(glm::vec3 position)
@@ -59,7 +61,7 @@ void Camera::setUpVector(glm::vec3 upVector)
 
 void Camera::rotate(float angleRad, glm::vec3 axis)
 {
-	mViewTransform = glm::rotate(mViewTransform, glm::degrees(angleRad), axis);
+	mViewTransform = glm::rotate(mViewTransform, angleRad, axis);
 }
 
 

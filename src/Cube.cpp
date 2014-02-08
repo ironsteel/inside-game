@@ -19,13 +19,15 @@
  *
  */
 
+#define GLM_FORCE_RADIANS
+
 #include "Cube.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 Cube::Cube(glm::vec3 &pos) :mTransform(glm::mat4(1.0)), mSelected(false)
 {
 	mTransform = glm::translate(mTransform, pos);
-	mTransform = glm::rotate(mTransform, 45.0f, glm::vec3(0, 1, 0));
+	mTransform = glm::rotate(mTransform, glm::radians(45.0f), glm::vec3(0, 1, 0));
 }
 
 Cube::~Cube()

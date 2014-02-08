@@ -16,31 +16,44 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#define GLM_FORCE_RADIANS
+
 #include "GameBoard.h"
 #include "ShaderProgram.h"
 #include "CubeGeometry.h"
 #include "Cube.h"
 #include "Ray.h"
+#include "TextureUtils.h"
 #include <iostream>
 
 GameBoard::GameBoard() : 
 	mCubeGeometry(new CubeGeometry()), 
-	mCubes(0), mNotVisibleCubes(0),
-	mTransofm(glm::mat4(1.0))
+	mDarkCubes(0), mNotVisibleCubes(0),
+	mTransform(glm::mat4(1.0)),
+	mCurrentCubeColor(DARK)
 {
-	mTransofm = glm::translate(mTransofm, glm::vec3(0, 0, -8.2));
-	mTransofm = glm::rotate(mTransofm, 55.0f, glm::vec3(1, 0, 0));
-	mPyramidFaces.push_back(vector<Cube*>());
-	mPyramidFaces.push_back(vector<Cube*>());
-	mPyramidFaces.push_back(vector<Cube*>());
-	
+	mTransform = glm::translate(mTransform, glm::vec3(0, 0, -8.2));
+	mTransform = glm::rotate(mTransform, glm::radians(55.0f), glm::vec3(1, 0, 0));
+ 	mPyramidFaces.push_back(vector<Cube*>());
+ 	mPyramidFaces.push_back(vector<Cube*>());
+ 	mPyramidFaces.push_back(vector<Cube*>()); 	
 }
 
 GameBoard::~GameBoard()
 {
-	while(!mCubes.empty()) {
-		delete mCubes.front();
-		mCubes.pop_front();
+	while(!mDarkCubes.empty()) {
+		delete mDarkCubes.front();
+		mDarkCubes.pop_front();
+	}
+	
+	while(!mLightCubes.empty()) {
+		delete mLightCubes.front();
+		mLightCubes.pop_front();
+	}
+	
+	while(!mPyramidBase.empty()) {
+		delete mPyramidBase.front();
+		mPyramidBase.pop_front();
 	}
 	
 	while(!mNotVisibleCubes.empty()) {
@@ -53,29 +66,49 @@ GameBoard::~GameBoard()
 
 void GameBoard::draw(ShaderProgram* program, glm::mat4 viewProjection)
 {
+	
+	GLint textureLocation = program->getUniformLocation(u_Sampler);
+	
+	
+	
 	GLint ligtPositionId = program->getUniformLocation(u_lightPosition);
 	glUniform3f(ligtPositionId, ligtx, ligty, ligtz);
 	
 	GLint vertIdx = program->getAttributeLocation(a_Position);
 	GLint texCoords = program->getAttributeLocation(a_TexCoords);
 	GLint normalsIds =  program->getAttributeLocation(a_Normal);
+
+	
+	mCubeGeometry->bindBuffers(vertIdx, texCoords, normalsIds);
+	
+
+	glUniform1i(textureLocation, 0);
+	drawCubeList(mPyramidBase, program, viewProjection);	
+	
+	drawCubeList(mDarkCubes, program, viewProjection);
+	
+	glUniform1i(textureLocation, 1);
+	drawCubeList(mLightCubes, program, viewProjection);
+	
+	mCubeGeometry->unbind(vertIdx, texCoords, normalsIds);
+}
+
+void GameBoard::drawCubeList(std::list<Cube*>& which, ShaderProgram* program, glm::mat4 viewProjection) 
+{
 	
 	GLint normalMatrixId = program->getUniformLocation(u_NormalMatrix);
 	GLint modelMatrixId = program->getUniformLocation(u_modelMatrix);
 	GLint selectedId = program->getUniformLocation(u_selected);
 	
-	mCubeGeometry->bindBuffers(vertIdx, texCoords, normalsIds);
-		
-	for (list<Cube*>::iterator ci = mCubes.begin(); ci != mCubes.end(); ++ci) {
-		glm::mat4 mvp = viewProjection * mTransofm * (*ci)->getTransform();
-		glm::mat4 model = mTransofm * (*ci)->getTransform();
+	for (list<Cube*>::iterator ci = which.begin(); ci != which.end(); ++ci) {
+		glm::mat4 mvp = viewProjection * mTransform * (*ci)->getTransform();
+		glm::mat4 model = mTransform * (*ci)->getTransform();
 		glm::mat3 normalMatrix = glm::inverseTranspose(glm::mat3(model));
 		glUniformMatrix3fv(normalMatrixId, 1, GL_FALSE, glm::value_ptr(normalMatrix));
 		glUniformMatrix4fv(modelMatrixId, 1, GL_FALSE, glm::value_ptr(model));
 		internalDraw(program, mvp);
 	}
 	
-	mCubeGeometry->unbind(vertIdx, texCoords, normalsIds);
 }
 
 void GameBoard::moveLight(float x, float y, float z) 
@@ -102,13 +135,17 @@ void GameBoard::intersect(glm::mat4& viewProjection, Ray& ray)
 	
 	for (list<Cube*>::iterator ci = mNotVisibleCubes.begin(); ci != mNotVisibleCubes.end(); ++ci)
 	{
-		glm::mat4 mvp =  mTransofm * (*ci)->getTransform();
+		glm::mat4 mvp =  mTransform * (*ci)->getTransform();
 		bool selected = (*ci)->mSelected;
 		if(!selected && mCubeGeometry->intersect(mvp, ray)) {
-			if((*ci)->hasSupportingNeibours()) 
-			{
+			if((*ci)->hasSupportingNeibours()) {
 				(*ci)->mSelected = !(*ci)->mSelected;
-				mCubes.push_back(*ci);
+				if(mCurrentCubeColor == LIGHT)
+					mLightCubes.push_back(*ci);
+				else 
+					mDarkCubes.push_back(*ci);
+				
+				
 				mNotVisibleCubes.erase(ci);
 				break;
 			}
@@ -118,16 +155,26 @@ void GameBoard::intersect(glm::mat4& viewProjection, Ray& ray)
 
 glm::mat4& GameBoard::getTransform()
 {
-	return mTransofm;
+	return mTransform;
 }
 
 void GameBoard::initGeometry()
 {
+	TextureUtils::loadTexture("../resources/textures/wood.png", &mDarkWoodTexture);
+	TextureUtils::loadTexture("../resources/textures/light-wood.png", &mLightWoodTexture);
+	
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, mDarkWoodTexture);
+	
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, mLightWoodTexture);
+	
+	
 	mCubeGeometry->initGeometry();
 	int level = 6;
 	for(int i = 0; i < level; i++) {
 		if(i == 0)
-			buildNextBoardLevel(mCubes, i * 2, level - i, true);
+			buildNextBoardLevel(mPyramidBase, i * 2, level - i, true);
 		else 
 			buildNextBoardLevel(mNotVisibleCubes, i * 2, level - i, false);
 	}

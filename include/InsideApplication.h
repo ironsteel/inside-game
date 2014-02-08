@@ -18,20 +18,13 @@
 #ifndef INSIDEAPPLICATION_H
 #define INSIDEAPPLICATION_H
 
-#include <GLES2/gl2.h>
-#include <glm/glm.hpp>
-#include <glm/ext.hpp>
+#define GLM_FORCE_RADIANS
+
+
 
 class GameBoard;
 class ShaderProgram;
 class Camera;
-
-typedef enum 
-{
-	LEFT,
-	RIGHT
-} MouseButton;
-
 
 class InsideApplication
 {
@@ -48,8 +41,8 @@ public:
 	void reshape(int width, int height);
 	void onKeyPressed(int key);
 	
-	void onPointerDown(MouseButton button, double x, double y);
-	void onPointerUp(MouseButton button, double cursorX, double cursorY);
+	void onPointerDown(int button, double x, double y);
+	void onPointerUp(int button, double cursorX, double cursorY);
 	
 	void onPointerMoved(double x, double y);
 	
@@ -59,7 +52,6 @@ private:
 	
 private:
 	ShaderProgram* mShaderProgram;
-	GLuint mTextureHandle;
 
 	Camera* mCamera;
 	GameBoard* mGameBoard;

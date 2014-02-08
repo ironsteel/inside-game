@@ -15,7 +15,6 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#define GLFW_INCLUDE_ES2
 
 #include <math.h>
 #include <stdlib.h>
@@ -75,17 +74,11 @@ static void mouse_down(GLFWwindow *window, int button, int pressed, int flags)
 {
 	double cursorX, cursorY;
 	glfwGetCursorPos(window, &cursorX, &cursorY);
-	
-	MouseButton btn;
-	if(button == GLFW_MOUSE_BUTTON_LEFT)
-		btn = LEFT;
-	else if(button == GLFW_MOUSE_BUTTON_RIGHT)
-		btn = RIGHT;
-	
+
 	if(pressed == GLFW_PRESS) {
-		app.onPointerDown(btn, cursorX, cursorY);
+		app.onPointerDown(button, cursorX, cursorY);
 	} else if(pressed == GLFW_RELEASE) {
-		app.onPointerUp(btn, cursorX, cursorY);
+		app.onPointerUp(button, cursorX, cursorY);
 	}
 	
 }

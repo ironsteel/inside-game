@@ -15,16 +15,22 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+#define GLFW_INCLUDE_NONE
+
+#include <math.h>
+#include <GLFW/glfw3.h>
+
 #include "InsideApplication.h"
 #include "ShaderProgram.h"
 #include "GameBoard.h"
 #include "TextureUtils.h"
 #include "ShaderManager.h"
-#include <math.h>
 #include "ResourceManager.h"
 #include "DefaultResourceProvider.h"
 #include "Camera.h"
 #include "Ray.h"
+
 
 
 InsideApplication::InsideApplication()
@@ -38,7 +44,6 @@ InsideApplication::InsideApplication()
 
 InsideApplication::~InsideApplication()
 {
-	glDeleteTextures(1, &mTextureHandle);
 	delete mGameBoard;
 	delete mShaderProgram;
 	delete mCamera;
@@ -46,11 +51,7 @@ InsideApplication::~InsideApplication()
 
 void InsideApplication::init()
 {
-	mShaderProgram = ShaderManager::getInstance().createShaderProgram("simple",
-																	  "shaders/simple.vsh",
-																      "shaders/simple.fsh");
-	
-	TextureUtils::loadTexture("../resources/textures/wood.png", &mTextureHandle);
+	mShaderProgram = ShaderManager::getInstance().createShaderProgram("simple", "shaders/simple.vsh", "shaders/simple.fsh");
 	
 	mGameBoard->initGeometry();
 	glEnable(GL_DEPTH_TEST);
@@ -59,13 +60,10 @@ void InsideApplication::init()
 void InsideApplication::drawOneFrame()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClearColor(0.4, 0.4, 0.4, 1);
 	
 	glUseProgram(mShaderProgram->getProgramId());
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, mTextureHandle);
-	
-	GLint textureLocation = mShaderProgram->getUniformLocation(u_Sampler);
-	glUniform1i(textureLocation, 0);
+
 	
 	mGameBoard->draw(mShaderProgram,  mCamera->getViewProjection());
 	
@@ -83,20 +81,24 @@ void InsideApplication::reshape(int width, int height)
 
 void InsideApplication::onKeyPressed(int key)
 {
-	
+	if(key == GLFW_KEY_D) {
+		mGameBoard->mCurrentCubeColor = DARK;
+	} else if(key == GLFW_KEY_L) {
+		mGameBoard->mCurrentCubeColor = LIGHT;
+	}
 }
 
-void InsideApplication::onPointerDown(MouseButton button, double x, double y)
+void InsideApplication::onPointerDown(int button, double x, double y)
 {
 	mLastXPos = mCurrentXPos = x;
 	mLastYPos = mCurYPos = y;
-	mLeftPressed = (button == LEFT);
+	mLeftPressed = (button == GLFW_MOUSE_BUTTON_LEFT);
 }
 
-void InsideApplication::onPointerUp(MouseButton button, double cursorX, double cursorY) 
+void InsideApplication::onPointerUp(int button, double cursorX, double cursorY) 
 {
     
-	if(button == LEFT) {
+	if(button == GLFW_MOUSE_BUTTON_LEFT) {
 		doSelection((float)cursorX, (float)cursorY);
 		mLeftPressed = false;
 	}

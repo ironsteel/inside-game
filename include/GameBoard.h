@@ -15,9 +15,6 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-/*
- *
- */
 
 #include <GLES2/gl2.h>
 #include <string.h>
@@ -34,6 +31,14 @@ class CubeGeometry;
 
 class ShaderProgram;
 class Cube;
+
+typedef enum 
+{
+	DARK,
+	LIGHT
+} PlayerCubeColor;
+
+
 class GameBoard
 {
 public:
@@ -50,22 +55,33 @@ public:
 private:
 	void buildNextBoardLevel(std::list<Cube*>& which, float startFrom, int level, bool selected);
 	
+	void drawCubeList(std::list<Cube*>& which, ShaderProgram* program, glm::mat4 viewProjection);
+	
 	Cube* addToSupportedCube(Cube* supportedCube, int index);
+
+
+public:
+	PlayerCubeColor mCurrentCubeColor;
 	
 private:
-	glm::mat4 mTransofm;
+	glm::mat4 mTransform;
 	CubeGeometry* mCubeGeometry;
-	std::list<Cube*> mCubes;
+	std::list<Cube*> mDarkCubes;
+	std::list<Cube*> mLightCubes;
+	
 	std::list<Cube*> mNotVisibleCubes;
 	std::vector<Cube*> mAllCubes;
 	std::vector< std::vector<Cube*> > mPyramidFaces;
-
 	
+	std::list<Cube*> mPyramidBase;
+
 	std::vector< std::vector<Cube*> > mLevels;
 	float ligtx = 5;
 	float ligty = 70;
 	float ligtz = 20;
 
+	GLuint mDarkWoodTexture;
+	GLuint mLightWoodTexture;
 };
 
 #endif // CUBE_H
