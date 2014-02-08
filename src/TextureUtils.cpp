@@ -131,6 +131,7 @@ bool TextureUtils::loadPngImage(const char *name, int &outWidth, int &outHeight,
 		memcpy(*outData+(row_bytes * (outHeight-1-i)), row_pointers[i], row_bytes);
 	}
 	
+	outHasAlpha = (png_get_color_type(png_ptr, info_ptr) != PNG_COLOR_TYPE_RGB);
 	
 	
 	/* Clean up after the read,
@@ -160,7 +161,7 @@ void TextureUtils::loadTexture(const char* textName, GLuint *g_textureID)
 	glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri( GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
+	glTexImage2D(GL_TEXTURE_2D, 0, hasAlpha ? GL_RGBA : GL_RGB, width, height, 0, hasAlpha ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, imageData);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	
 	free(imageData);
