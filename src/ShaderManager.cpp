@@ -20,13 +20,13 @@
  */
 
 #include "ShaderManager.h"
-#include "ShaderUtills.h"
+#include "ShaderUtils.h"
 #include <stdexcept>
 
 ShaderProgram* ShaderManager::createShaderProgram(const std::string& name, const char* vertexShaderPath, const char* fragmentShaderPath)
 {
-	GLuint vertexShader = compileShader(vertexShaderPath, GL_VERTEX_SHADER);
-	GLuint fragmentShader = compileShader(fragmentShaderPath, GL_FRAGMENT_SHADER);
+	GLuint vertexShader = ShaderUtils::compileShaderFromFile(vertexShaderPath, GL_VERTEX_SHADER);
+	GLuint fragmentShader = ShaderUtils::compileShaderFromFile(fragmentShaderPath, GL_FRAGMENT_SHADER);
 	if(!vertexShader || !fragmentShader) {
 		throw std::runtime_error("Cannot compile shaders");
 	}

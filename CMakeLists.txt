@@ -12,7 +12,7 @@ set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -pedantic -fPIC" )
 
 set(CMAKE_BUILD_TYPE Debug CACHE STRING "default to debug" FORCE)
 
-SET(LIBRARIES ${GLFW_LIBRARY} ${OPENGL_LIBRARY} ${PNG_LIBRARY})
+SET(LIBRARIES ${GLFW_LIBRARY} ${OPENGL_LIBRARY} ${PNG_LIBRARY} RocketCore RocketControls RocketDebugger)
 
 
 
@@ -22,6 +22,12 @@ file(GLOB RESOURCES "${PROJECT_SOURCE_DIR}/resources/shaders/*")
 
 
 include_directories("${PROJECT_SOURCE_DIR}/include/")
+
+include_directories("${PROJECT_SOURCE_DIR}/libRocket/Include")
+include_directories("${PROJECT_SOURCE_DIR}/libRocket/Samples/shell/include")
+
+# Build libRocket 
+add_subdirectory("${PROJECT_SOURCE_DIR}/libRocket/Build")
 
 link_directories (${OPENGLEXAMPLES_BINARY_DIR}/bin)
 

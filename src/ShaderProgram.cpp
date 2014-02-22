@@ -16,7 +16,7 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "ShaderProgram.h"
-
+#include "ShaderUtils.h"
 
 ShaderProgram::ShaderProgram(GLuint vertexShader, GLuint fragmentShader)
 :mVertexShader(vertexShader), mFragmentShader(fragmentShader), mShaderProgramObject(0)
@@ -34,34 +34,14 @@ ShaderProgram::~ShaderProgram()
 
 
 bool ShaderProgram::link()
-{
-	bool linkStatus = true;
-	mShaderProgramObject = glCreateProgram();
-	GLint linked;
-
-	glAttachShader(mShaderProgramObject, mVertexShader);
-	glAttachShader(mShaderProgramObject, mFragmentShader);
-
+{	
+	mShaderProgramObject =ShaderUtils::createProgramAndAttachShaders(mVertexShader, mFragmentShader);
+	
 	glBindAttribLocation(mShaderProgramObject, 0, a_Position.c_str());
 	glBindAttribLocation(mShaderProgramObject, 1, a_TexCoords.c_str());
 	glBindAttribLocation(mShaderProgramObject, 2, a_Normal.c_str());
 
-	glLinkProgram(mShaderProgramObject);
-
-	glGetProgramiv(mShaderProgramObject, GL_LINK_STATUS, &linked);
-
-	if (!linked) {
-		GLint infoLen = 0;
-		glGetProgramiv(mShaderProgramObject, GL_INFO_LOG_LENGTH, &infoLen);
-		char *infoLog = (char*) malloc(sizeof(char) * infoLen);
-		glGetProgramInfoLog(mShaderProgramObject, infoLen, NULL, infoLog);
-		printf("Error linking shader program\n%s\n", infoLog);
-		glDeleteProgram(mShaderProgramObject);
-		free(infoLog);
-		linkStatus = false;
-	}
-
-
+	bool linkStatus = ShaderUtils::linkProgram(mShaderProgramObject);
 
 
 	if(!initUniformLocations())

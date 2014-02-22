@@ -154,6 +154,7 @@ int main(int argc, char *argv[])
 		timeSinceLastFrame = getCurrentTime() - startTime;
 	}
 	
+	app.terminate();
 	// Terminate GLFW
 	glfwTerminate();
 	

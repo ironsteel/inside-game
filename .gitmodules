@@ -1,0 +1,3 @@
+[submodule "libRocket"]
+	path = libRocket
+	url = https://github.com/ironsteel/libRocket.git

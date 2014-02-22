@@ -20,6 +20,8 @@
 
 #include <math.h>
 #include <GLFW/glfw3.h>
+#include <Rocket/Core.h>
+#include <Rocket/Debugger/Debugger.h>
 
 #include "InsideApplication.h"
 #include "ShaderProgram.h"
@@ -30,8 +32,9 @@
 #include "DefaultResourceProvider.h"
 #include "Camera.h"
 #include "Ray.h"
-
-
+#include "ShellFileInterface.h"
+#include "ShellSystemInterface.h"
+#include "RenderInterfaceOpenGLES.h"
 
 InsideApplication::InsideApplication()
 {
@@ -47,6 +50,10 @@ InsideApplication::~InsideApplication()
 	delete mGameBoard;
 	delete mShaderProgram;
 	delete mCamera;
+	
+	delete mRocketGLESRenderer;
+	delete mRocketFileInterface;
+	delete mRocketSystemInterface;
 }
 
 void InsideApplication::init()
@@ -54,7 +61,64 @@ void InsideApplication::init()
 	mShaderProgram = ShaderManager::getInstance().createShaderProgram("simple", "shaders/simple.vsh", "shaders/simple.fsh");
 	
 	mGameBoard->initGeometry();
-	glEnable(GL_DEPTH_TEST);
+	
+	
+	mRocketSystemInterface = new ShellSystemInterface();
+	Rocket::Core::SetSystemInterface(mRocketSystemInterface);
+	
+	// Rocket initialisation.
+	mRocketFileInterface = new ShellFileInterface("../resources/");
+	Rocket::Core::SetFileInterface(mRocketFileInterface);
+	
+	
+	mRocketGLESRenderer = new RenderInterfaceOpenGLES();
+	mRocketGLESRenderer->SetViewport(mCamera->mScreenWidth, mCamera->mScreenHeight);
+	Rocket::Core::SetRenderInterface(mRocketGLESRenderer);
+	
+	
+	Rocket::Core::Initialise();
+	
+	mRocketContext = Rocket::Core::CreateContext("main", Rocket::Core::Vector2i(mCamera->mScreenWidth, mCamera->mScreenHeight));
+	if (mRocketContext == NULL)
+	{
+		Rocket::Core::Shutdown();
+		
+	}
+	
+	Rocket::Debugger::Initialise(mRocketContext);
+	
+	loadFonts("../resources/fonts/");
+	
+	// Load and show the tutorial document.
+	Rocket::Core::ElementDocument* document = mRocketContext->LoadDocument("../resources/layouts/demo.rml");
+	if (document != NULL)
+	{
+		document->Show();
+		document->RemoveReference();
+	}
+	
+	
+}
+
+void InsideApplication::terminate()
+{
+	// Shutdown Rocket.
+	mRocketContext->RemoveReference();
+	Rocket::Core::Shutdown();
+}
+
+void InsideApplication::loadFonts(const char* directory)
+{
+	Rocket::Core::String font_names[4];
+	font_names[0] = "Delicious-Roman.otf";
+	font_names[1] = "Delicious-Italic.otf";
+	font_names[2] = "Delicious-Bold.otf";
+	font_names[3] = "Delicious-BoldItalic.otf";
+	
+	for (int i = 0; i < sizeof(font_names) / sizeof(Rocket::Core::String); i++)
+	{
+		Rocket::Core::FontDatabase::LoadFontFace(Rocket::Core::String(directory) + font_names[i]);
+	}
 }
 
 void InsideApplication::drawOneFrame()
@@ -62,11 +126,16 @@ void InsideApplication::drawOneFrame()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.4, 0.4, 0.4, 1);
 	
-	glUseProgram(mShaderProgram->getProgramId());
+	
+	glEnable(GL_DEPTH_TEST);
+ 	glUseProgram(mShaderProgram->getProgramId());
+ 
+ 	mGameBoard->draw(mShaderProgram,  mCamera->getViewProjection());
+	
 
-	
-	mGameBoard->draw(mShaderProgram,  mCamera->getViewProjection());
-	
+	glDisable(GL_DEPTH_TEST);
+	mRocketContext->Update();
+	mRocketContext->Render();
 }
 
 void InsideApplication::update(double timeSinceLastFrame)
@@ -76,6 +145,8 @@ void InsideApplication::update(double timeSinceLastFrame)
 
 void InsideApplication::reshape(int width, int height)
 {
+	if(mRocketGLESRenderer)
+		mRocketGLESRenderer->SetViewport(width, height);
 	mCamera->windowSizeChanged(width, height);
 }
 
@@ -93,11 +164,16 @@ void InsideApplication::onPointerDown(int button, double x, double y)
 	mLastXPos = mCurrentXPos = x;
 	mLastYPos = mCurYPos = y;
 	mLeftPressed = (button == GLFW_MOUSE_BUTTON_LEFT);
+	
+	mRocketContext->ProcessMouseButtonDown(button, 0);
+	
 }
 
 void InsideApplication::onPointerUp(int button, double cursorX, double cursorY) 
 {
     
+	mRocketContext->ProcessMouseButtonUp(button, 0);
+	
 	if(button == GLFW_MOUSE_BUTTON_LEFT) {
 		doSelection((float)cursorX, (float)cursorY);
 		mLeftPressed = false;
@@ -111,6 +187,8 @@ void InsideApplication::doSelection(float x, float y)
 
 void InsideApplication::onPointerMoved(double x, double y)
 {
+	mRocketContext->ProcessMouseMove((int) x,(int) y, 0);
+	
 	mCurrentXPos = x;
 	mCurYPos = y;
 	if(mLeftPressed) {

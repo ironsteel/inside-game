@@ -75,6 +75,8 @@ void CubeGeometry::unbind(GLint vertexId, GLint textureCoordsId, GLint normalsId
 	glDisableVertexAttribArray(vertexId);
 	glDisableVertexAttribArray(textureCoordsId);
 	glDisableVertexAttribArray(normalsId);
+	glBindBuffer(GL_ARRAY_BUFFER,  0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,  0);
 }
 
 void CubeGeometry::draw()
@@ -223,6 +225,8 @@ void CubeGeometry::initGeometry()
 	glBindBuffer(GL_ARRAY_BUFFER,  mVboIds[4]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_normals), cube_normals, GL_STATIC_DRAW);
 	
+	glBindBuffer(GL_ARRAY_BUFFER,  0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,  0);
 }
 
 CubeGeometry::~CubeGeometry()

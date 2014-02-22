@@ -67,6 +67,12 @@ GameBoard::~GameBoard()
 void GameBoard::draw(ShaderProgram* program, glm::mat4 viewProjection)
 {
 	
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, mDarkWoodTexture);
+	
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, mLightWoodTexture);
+	
 	GLint textureLocation = program->getUniformLocation(u_Sampler);
 	
 	
@@ -163,14 +169,8 @@ void GameBoard::initGeometry()
 	TextureUtils::loadTexture("../resources/textures/wood.png", &mDarkWoodTexture);
 	TextureUtils::loadTexture("../resources/textures/light-wood.png", &mLightWoodTexture);
 	
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, mDarkWoodTexture);
-	
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, mLightWoodTexture);
-	
-	
 	mCubeGeometry->initGeometry();
+	mCubeGeometry->unbind(0, 1, 2);
 	int level = 6;
 	for(int i = 0; i < level; i++) {
 		if(i == 0)

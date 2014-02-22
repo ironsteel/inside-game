@@ -15,33 +15,22 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef SHADERUTILS_H
+#define SHADERUTILS_H
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <dirent.h>
-#include <fnmatch.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <GLES2/gl2.h>
 
-#include "DefaultResourceProvider.h"
 
-char* DefaultResourceProvider::getFileBuffer(const char *filePath)
+class ShaderUtils
 {
-	FILE* file = fopen(filePath, "rb");
-	if (file == 0)
-		fprintf(stderr, "Cannot open file %s", filePath);
+public:
+	static GLuint compileShader(const char *src, GLenum shaderType);
+	static GLuint compileShaderFromFile(const char *path, GLenum shaderType);
 	
-	fseek(file, 0, SEEK_END);
-	const size_t size = ftell(file);
-	fseek(file, 0, SEEK_SET);
-	
-	
-	char* buffer = (char*) malloc(size+1);
-	
-	buffer[size] = '\0';
-	
-	const size_t size_read = fread((void *)buffer, sizeof(char), size, file);
-	fclose(file);
-	return buffer;
-}
+	static GLuint createProgramAndAttachShaders(GLuint vertexShader, GLuint fragmentShader);
+	static bool linkProgram(GLuint shaderProgram);
+};
+
+
+
+#endif // SHADERUTILS_H

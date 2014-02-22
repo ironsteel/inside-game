@@ -20,11 +20,15 @@
 
 #define GLM_FORCE_RADIANS
 
+#include <Rocket/Core/Context.h>
+#include <Rocket/Core/FileInterface.h>
+#include <Rocket/Core/SystemInterface.h>
 
 
 class GameBoard;
 class ShaderProgram;
 class Camera;
+class RenderInterfaceOpenGLES;
 
 class InsideApplication
 {
@@ -34,6 +38,7 @@ public:
 	
 public:
 	void init();
+	void terminate();
 	
 	void drawOneFrame();
 	void update(double timeSinceLastFrame);
@@ -45,16 +50,25 @@ public:
 	void onPointerUp(int button, double cursorX, double cursorY);
 	
 	void onPointerMoved(double x, double y);
+   
 	
 	
 private:
 	void doSelection(float x, float y);
+	
+	void loadFonts(const char* directory);
 	
 private:
 	ShaderProgram* mShaderProgram;
 
 	Camera* mCamera;
 	GameBoard* mGameBoard;
+
+	// libRocket stuff
+	Rocket::Core::FileInterface* mRocketFileInterface;
+	Rocket::Core::SystemInterface* mRocketSystemInterface;
+	Rocket::Core::Context* mRocketContext;
+	RenderInterfaceOpenGLES *mRocketGLESRenderer;
 	
 	bool mLeftPressed;
 	
