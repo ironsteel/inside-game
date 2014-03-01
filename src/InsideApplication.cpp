@@ -58,9 +58,8 @@ InsideApplication::~InsideApplication()
 
 void InsideApplication::init()
 {
-	mShaderProgram = ShaderManager::getInstance().createShaderProgram("simple", "shaders/simple.vsh", "shaders/simple.fsh");
-	
 	mGameBoard->initGeometry();
+	mShaderProgram = ShaderManager::getInstance().createShaderProgram("simple", "shaders/simple.vsh", "shaders/simple.fsh");
 	
 	
 	mRocketSystemInterface = new ShellSystemInterface();
@@ -134,6 +133,7 @@ void InsideApplication::drawOneFrame()
 	
 
 	glDisable(GL_DEPTH_TEST);
+	
 	mRocketContext->Update();
 	mRocketContext->Render();
 }
@@ -148,6 +148,7 @@ void InsideApplication::reshape(int width, int height)
 	if(mRocketGLESRenderer)
 		mRocketGLESRenderer->SetViewport(width, height);
 	mCamera->windowSizeChanged(width, height);
+	
 }
 
 void InsideApplication::onKeyPressed(int key)
@@ -161,18 +162,24 @@ void InsideApplication::onKeyPressed(int key)
 
 void InsideApplication::onPointerDown(int button, double x, double y)
 {
+	if (mRocketContext->GetHoverElement() != mRocketContext->GetRootElement()) {
+		mRocketContext->ProcessMouseButtonDown(button, 0);
+		return;
+	}
+	
 	mLastXPos = mCurrentXPos = x;
 	mLastYPos = mCurYPos = y;
 	mLeftPressed = (button == GLFW_MOUSE_BUTTON_LEFT);
-	
-	mRocketContext->ProcessMouseButtonDown(button, 0);
 	
 }
 
 void InsideApplication::onPointerUp(int button, double cursorX, double cursorY) 
 {
-    
-	mRocketContext->ProcessMouseButtonUp(button, 0);
+	if (mRocketContext->GetHoverElement() != mRocketContext->GetRootElement()) {
+		mRocketContext->ProcessMouseButtonUp(button, 0);
+		return;
+	}
+	
 	
 	if(button == GLFW_MOUSE_BUTTON_LEFT) {
 		doSelection((float)cursorX, (float)cursorY);
@@ -187,6 +194,7 @@ void InsideApplication::doSelection(float x, float y)
 
 void InsideApplication::onPointerMoved(double x, double y)
 {
+
 	mRocketContext->ProcessMouseMove((int) x,(int) y, 0);
 	
 	mCurrentXPos = x;
