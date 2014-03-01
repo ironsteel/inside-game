@@ -46,7 +46,8 @@ enum VertexAttributes
 
 
 const char* vertShader = 
-"attribute vec2 position; \
+"#version 100 \n\
+attribute vec2 position; \
 attribute vec2 texcoord; \
 attribute vec4 color; \
 \
@@ -66,7 +67,8 @@ void main() { \
 
 //
 const char* fragShader = 
-"precision mediump float;\
+"#version 100 \n\
+precision mediump float;\
 varying vec2 v_texCoord; \
 varying vec4 vcolor; \
 \
@@ -76,7 +78,8 @@ void main() { \
     ";
 
 const char* fragShaderTextured = 
-"precision mediump float;\
+"#version 100 \n\
+precision mediump float;\
 varying vec2 v_texCoord; \
 varying vec4 vcolor; \
 uniform sampler2D textureHandle;\
