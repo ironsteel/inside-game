@@ -23,15 +23,12 @@
 
 #include "GameState.h"
 #include <Rocket/Core.h>
-#include <Rocket/Debugger/Debugger.h>
 #include "ShaderManager.h"
 #include "GameBoard.h"
 #include "TextureUtils.h"
 #include "Camera.h"
 #include "Ray.h"
-#include "ShellFileInterface.h"
-#include "ShellSystemInterface.h"
-#include "RenderInterfaceOpenGLES.h"
+#include "GUI.h"
 
 
 GameState::GameState()
@@ -45,49 +42,18 @@ GameState::~GameState()
 	delete mGameBoard;
 	delete mShaderProgram;
 	delete mCamera;
-	
-	delete mRocketGLESRenderer;
-	delete mRocketFileInterface;
-	delete mRocketSystemInterface;
+
 	
 }
 
 void GameState::enter()
 {
-
-	
 	mGameBoard->initGeometry();
 	mShaderProgram = ShaderManager::getInstance().createShaderProgram("simple", "shaders/simple.vsh", "shaders/simple.fsh");
 	
-	
-	mRocketSystemInterface = new ShellSystemInterface();
-	Rocket::Core::SetSystemInterface(mRocketSystemInterface);
-	
-	// Rocket initialisation.
-	mRocketFileInterface = new ShellFileInterface("../resources/");
-	Rocket::Core::SetFileInterface(mRocketFileInterface);
-	
-	
-	mRocketGLESRenderer = new RenderInterfaceOpenGLES();
-	mRocketGLESRenderer->SetViewport(mCamera->mScreenWidth, mCamera->mScreenHeight);
-	Rocket::Core::SetRenderInterface(mRocketGLESRenderer);
-	
-	
-	Rocket::Core::Initialise();
-	
-	mRocketContext = Rocket::Core::CreateContext("main", Rocket::Core::Vector2i(mCamera->mScreenWidth, mCamera->mScreenHeight));
-	if (mRocketContext == NULL)
-	{
-		Rocket::Core::Shutdown();
-		
-	}
-	
-	Rocket::Debugger::Initialise(mRocketContext);
-	
-	loadFonts("../resources/fonts/");
-	
 	// Load and show the tutorial document.
-	Rocket::Core::ElementDocument* document = mRocketContext->LoadDocument("../resources/layouts/demo.rml");
+
+	Rocket::Core::ElementDocument* document = GUI::getInstance().getContext()->LoadDocument("../resources/layouts/demo.rml");
 	if (document != NULL)
 	{
 		document->Show();
@@ -97,47 +63,19 @@ void GameState::enter()
 	
 }
 
-
-void GameState::loadFonts(const char* directory)
-{
-	Rocket::Core::String font_names[4];
-	font_names[0] = "Delicious-Roman.otf";
-	font_names[1] = "Delicious-Italic.otf";
-	font_names[2] = "Delicious-Bold.otf";
-	font_names[3] = "Delicious-BoldItalic.otf";
-	
-	for (int i = 0; i < sizeof(font_names) / sizeof(Rocket::Core::String); i++)
-	{
-		Rocket::Core::FontDatabase::LoadFontFace(Rocket::Core::String(directory) + font_names[i]);
-	}
-}
-
 void GameState::draw(double timeSinceLastFrame)
 {
-	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.4, 0.4, 0.4, 1);
-	
 	
 	glEnable(GL_DEPTH_TEST);
  	glUseProgram(mShaderProgram->getProgramId());
  
  	mGameBoard->draw(mShaderProgram,  mCamera->getViewProjection());
-	
-
-	glDisable(GL_DEPTH_TEST);
-	
-	mRocketContext->Update();
-	mRocketContext->Render();
 }
 
 void GameState::onPointerDown(int button, double x, double y)
-{
-	if (mRocketContext->GetHoverElement() != mRocketContext->GetRootElement()) {
-		mRocketContext->ProcessMouseButtonDown(button, 0);
-		return;
-	}
-	
+{	
 	mLastXPos = mCurrentXPos = x;
 	mLastYPos = mCurYPos = y;
 	mLeftPressed = (button == GLFW_MOUSE_BUTTON_LEFT);
@@ -145,13 +83,7 @@ void GameState::onPointerDown(int button, double x, double y)
 }
 
 void GameState::onPointerUp(int button, double cursorX, double cursorY) 
-{
-	if (mRocketContext->GetHoverElement() != mRocketContext->GetRootElement()) {
-		mRocketContext->ProcessMouseButtonUp(button, 0);
-		return;
-	}
-	
-	
+{	
 	if(button == GLFW_MOUSE_BUTTON_LEFT) {
 		doSelection((float)cursorX, (float)cursorY);
 		mLeftPressed = false;
@@ -166,18 +98,11 @@ void GameState::doSelection(float x, float y)
 
 void GameState::reshape(int width, int height) 
 {
-	if(mRocketGLESRenderer) {
-		mRocketGLESRenderer->SetViewport(width, height);
-		mRocketContext->SetDimensions(Rocket::Core::Vector2i(width, height));
-	}
-	mCamera->windowSizeChanged(width, height);
-	
+	mCamera->windowSizeChanged(width, height);	
 }
 
 void GameState::onPointerMoved(double x, double y)
 {
-	mRocketContext->ProcessMouseMove((int) x,(int) y, 0);
-	
 	mCurrentXPos = x;
 	mCurYPos = y;
 	if(mLeftPressed) {
@@ -212,7 +137,4 @@ void GameState::resume()
 
 void GameState::exit()
 {
-	// Shutdown Rocket.
-	mRocketContext->RemoveReference();
-	Rocket::Core::Shutdown();
 }

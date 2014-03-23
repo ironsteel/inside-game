@@ -27,7 +27,6 @@
 class GameBoard;
 class ShaderProgram;
 class Camera;
-class RenderInterfaceOpenGLES;
 
 class GameState : public AppState
 {
@@ -61,15 +60,7 @@ private:
 	
 	Camera* mCamera;
 	GameBoard* mGameBoard;
-	
-	// libRocket stuff
-	Rocket::Core::FileInterface* mRocketFileInterface;
-	Rocket::Core::SystemInterface* mRocketSystemInterface;
-	Rocket::Core::Context* mRocketContext;
-	RenderInterfaceOpenGLES *mRocketGLESRenderer;
-	
-	
-	
+
 	bool mLeftPressed;
 	
 	float mLastXPos, mCurrentXPos;

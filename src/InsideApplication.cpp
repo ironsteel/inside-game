@@ -26,6 +26,7 @@
 #include "ResourceManager.h"
 #include "DefaultResourceProvider.h"
 #include "GameState.h"
+#include "GUI.h"
 
 
 InsideApplication::InsideApplication()
@@ -44,6 +45,7 @@ InsideApplication::~InsideApplication()
 
 void InsideApplication::init()
 {
+	GUI::getInstance().init("../resources/");
 	mStateManager->start(mStateManager->findByName("GameState"));	
 }
 
@@ -55,6 +57,7 @@ void InsideApplication::terminate()
 void InsideApplication::drawOneFrame()
 {
 	mStateManager->getActiveState()->draw(0);
+	GUI::getInstance().updateGUI();
 }
 
 void InsideApplication::update(double timeSinceLastFrame)
@@ -67,6 +70,7 @@ void InsideApplication::reshape(int width, int height)
 	if(AppState *activeState = mStateManager->getActiveState()) {
 		activeState->reshape(width, height);
 	}
+	GUI::getInstance().setViewPortSize(width, height);
 }
 void InsideApplication::onKeyPressed(int key)
 {
@@ -75,15 +79,22 @@ void InsideApplication::onKeyPressed(int key)
 
 void InsideApplication::onPointerDown(int button, double x, double y)
 {
+	if(GUI::getInstance().processMouseDown(button, 0)) {
+		return;
+	}
 	mStateManager->getActiveState()->onPointerDown(button, x, y);
 }
 
 void InsideApplication::onPointerUp(int button, double cursorX, double cursorY) 
 {
+	if(GUI::getInstance().processMouseUp(button, 0)) {
+		return;
+	}
 	mStateManager->getActiveState()->onPointerUp(button, cursorX, cursorY);
 }
 
 void InsideApplication::onPointerMoved(double x, double y)
 {
+	GUI::getInstance().processMouseMove(x, y);
 	mStateManager->getActiveState()->onPointerMoved(x, y);
 }
