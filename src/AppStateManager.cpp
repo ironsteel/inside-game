@@ -148,6 +148,11 @@ void AppStateManager::popAllAndPushAppState(AppState* state)
 	pushAppState(state);
 }
 
+AppState *AppStateManager::getActiveState()
+{
+	return m_ActiveStateStack.back();
+}
+
 void AppStateManager::pauseAppState()
 {
 	if(!m_ActiveStateStack.empty())

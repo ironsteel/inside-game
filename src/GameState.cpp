@@ -197,7 +197,6 @@ void GameState::onKeyPressed(int key)
 	} else if(key == GLFW_KEY_L) {
 		mGameBoard->mCurrentCubeColor = LIGHT;
 	}
-	
 }
 
 

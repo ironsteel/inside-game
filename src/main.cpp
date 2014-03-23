@@ -131,11 +131,14 @@ int main(int argc, char *argv[])
 	
 	glfwMakeContextCurrent(window);
 	
-	glfwGetWindowSize(window, &width, &height);
-	reshape(window, width, height);
+
+
 	// Parse command-line options
 	init(argc, argv);
 	
+	glfwGetWindowSize(window, &width, &height);
+	reshape(window, width, height);
+
 	double startTime = glfwGetTime();
 	double timeSinceLastFrame = 0;
 	

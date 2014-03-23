@@ -54,37 +54,36 @@ void InsideApplication::terminate()
 
 void InsideApplication::drawOneFrame()
 {
-	mStateManager->findByName("GameState")->draw(0);
+	mStateManager->getActiveState()->draw(0);
 }
 
 void InsideApplication::update(double timeSinceLastFrame)
 {
-	mStateManager->findByName("GameState")->update(timeSinceLastFrame);
+	mStateManager->getActiveState()->update(timeSinceLastFrame);
 }
 
 void InsideApplication::reshape(int width, int height)
 {
-	if(mStateManager->findByName("GameState")) {
-		mStateManager->findByName("GameState")->reshape(width, height);	
+	if(AppState *activeState = mStateManager->getActiveState()) {
+		activeState->reshape(width, height);
 	}
 }
 void InsideApplication::onKeyPressed(int key)
 {
-	mStateManager->findByName("GameState")->onKeyPressed(key);
+	mStateManager->getActiveState()->onKeyPressed(key);
 }
 
 void InsideApplication::onPointerDown(int button, double x, double y)
 {
-	mStateManager->findByName("GameState")->onPointerDown(button, x, y);
+	mStateManager->getActiveState()->onPointerDown(button, x, y);
 }
 
 void InsideApplication::onPointerUp(int button, double cursorX, double cursorY) 
 {
-	mStateManager->findByName("GameState")->onPointerUp(button, cursorX, cursorY);
+	mStateManager->getActiveState()->onPointerUp(button, cursorX, cursorY);
 }
-
 
 void InsideApplication::onPointerMoved(double x, double y)
 {
-	mStateManager->findByName("GameState")->onPointerMoved(x, y);
+	mStateManager->getActiveState()->onPointerMoved(x, y);
 }

@@ -26,6 +26,7 @@ public:
 	void pauseAppState();
 	void shutdown();
 	void popAllAndPushAppState(AppState* state);
+	AppState* getActiveState();
 
 protected:
 	void init(AppState *state);
