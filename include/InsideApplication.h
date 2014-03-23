@@ -24,11 +24,7 @@
 #include <Rocket/Core/FileInterface.h>
 #include <Rocket/Core/SystemInterface.h>
 
-
-class GameBoard;
-class ShaderProgram;
-class Camera;
-class RenderInterfaceOpenGLES;
+class AppStateManager;
 
 class InsideApplication
 {
@@ -54,27 +50,17 @@ public:
 	
 	
 private:
-	void doSelection(float x, float y);
+//	void doSelection(float x, float y);
 	
 	void loadFonts(const char* directory);
 	
 private:
-	ShaderProgram* mShaderProgram;
+	AppStateManager* mStateManager;
+	
+	
 
-	Camera* mCamera;
-	GameBoard* mGameBoard;
-
-	// libRocket stuff
-	Rocket::Core::FileInterface* mRocketFileInterface;
-	Rocket::Core::SystemInterface* mRocketSystemInterface;
-	Rocket::Core::Context* mRocketContext;
-	RenderInterfaceOpenGLES *mRocketGLESRenderer;
 	
-	bool mLeftPressed;
 	
-	float mLastXPos, mCurrentXPos;
-	
-    float mLastYPos, mCurYPos;
 	
 };
 

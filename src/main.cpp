@@ -144,11 +144,12 @@ int main(int argc, char *argv[])
 	{
 		
 		startTime = getCurrentTime();
-		// Draw gears
+
 		draw();
 		// Swap buffers
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+
 		// Update animation
 		animate(timeSinceLastFrame);
 		timeSinceLastFrame = getCurrentTime() - startTime;
