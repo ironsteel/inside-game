@@ -26,6 +26,7 @@
 #include "ResourceManager.h"
 #include "DefaultResourceProvider.h"
 #include "GameState.h"
+#include "MenuState.h"
 #include "GUI.h"
 
 
@@ -35,23 +36,25 @@ InsideApplication::InsideApplication()
 	resManager.setBaseDirectory("../resources/");
 	resManager.setResourceProvider(new DefaultResourceProvider());
 	mStateManager = new AppStateManager();
-	GameState::create(mStateManager, "GameState");
+
 }
 
 InsideApplication::~InsideApplication()
 {
-	delete mStateManager;
+
 }
 
 void InsideApplication::init()
 {
 	GUI::getInstance().init("../resources/");
-	mStateManager->start(mStateManager->findByName("GameState"));	
+	GameState::create(mStateManager, "GameState");
+	MenuState::create(mStateManager, "MenuState");
+	mStateManager->start(mStateManager->findByName("MenuState"));
 }
 
 void InsideApplication::terminate()
 {
-	mStateManager->shutdown();
+	delete mStateManager;
 }
 
 void InsideApplication::drawOneFrame()

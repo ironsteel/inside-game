@@ -22,7 +22,6 @@
 #include <GLFW/glfw3.h>
 
 #include "GameState.h"
-#include <Rocket/Core.h>
 #include "ShaderManager.h"
 #include "GameBoard.h"
 #include "TextureUtils.h"
@@ -30,37 +29,35 @@
 #include "Ray.h"
 #include "GUI.h"
 
+#include <iostream>
+
+using namespace std;
 
 GameState::GameState()
 {
 	mGameBoard = new GameBoard();
 	mCamera = new Camera(glm::vec3(0, 0, 0), glm::vec3(0, 20, -20), glm::vec3(0, 1, 0));
+	mGameBoard->initGeometry();
+	mShaderProgram = ShaderManager::getInstance().createShaderProgram("simple", "shaders/simple.vsh", "shaders/simple.fsh");
 }
 
 GameState::~GameState()
-{       
+{
+	if (mGameStateGui != NULL) {
+		mGameStateGui->RemoveReference();
+	}
 	delete mGameBoard;
 	delete mShaderProgram;
-	delete mCamera;
-
-	
+	delete mCamera;	
 }
 
 void GameState::enter()
 {
-	mGameBoard->initGeometry();
-	mShaderProgram = ShaderManager::getInstance().createShaderProgram("simple", "shaders/simple.vsh", "shaders/simple.fsh");
-	
 	// Load and show the tutorial document.
-
-	Rocket::Core::ElementDocument* document = GUI::getInstance().getContext()->LoadDocument("../resources/layouts/demo.rml");
-	if (document != NULL)
-	{
-		document->Show();
-		document->RemoveReference();
+	mGameStateGui = GUI::getInstance().getContext()->LoadDocument("../resources/layouts/demo.rml");
+	if(mGameStateGui != NULL) {
+		mGameStateGui->Show();
 	}
-	
-	
 }
 
 void GameState::draw(double timeSinceLastFrame)
@@ -121,20 +118,24 @@ void GameState::onKeyPressed(int key)
 		mGameBoard->mCurrentCubeColor = DARK;
 	} else if(key == GLFW_KEY_L) {
 		mGameBoard->mCurrentCubeColor = LIGHT;
+	} else if(key == GLFW_KEY_ESCAPE) {
+		popAppState();
 	}
 }
 
 
 bool GameState::pause()
 {
+	mGameStateGui->Hide();
 	return true;
 }
 
 void GameState::resume()
 {
-
+	mGameStateGui->Show();
 }
 
 void GameState::exit()
 {
+	mGameStateGui->Hide();
 }

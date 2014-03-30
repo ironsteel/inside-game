@@ -174,9 +174,5 @@ void AppStateManager::shutdown()
 
 void AppStateManager::init(AppState* state)
 {
-// 	AdvancedOgreFramework::getSingletonPtr()->m_pKeyboard->setEventCallback(state);
-// 	AdvancedOgreFramework::getSingletonPtr()->m_pMouse->setEventCallback(state);
-// 	AdvancedOgreFramework::getSingletonPtr()->m_pTrayMgr->setListener(state);
-// 
-// 	AdvancedOgreFramework::getSingletonPtr()->m_pRenderWnd->resetStatistics();
+
 }

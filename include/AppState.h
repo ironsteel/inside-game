@@ -26,7 +26,9 @@ public:
 class AppState
 {
 public:
-	static void create(AppStateListener* parent, const std::string name) {};
+	static void create(AppStateListener* parent, const std::string name) {}
+
+	virtual ~AppState() {}
 
 	void destroy() {
 		delete this;
@@ -37,22 +39,23 @@ public:
 	virtual bool pause() {
 		return true;
 	}
-	virtual void resume() {};
-	virtual void update(double timeSinceLastFrame) = 0;
-	virtual void draw(double timeSinceLastFrame) = 0;
-	virtual void reshape(int width, int height) = 0;
+	virtual void resume() {}
+	virtual void update(double timeSinceLastFrame) {}
+	virtual void draw(double timeSinceLastFrame) {}
+	virtual void reshape(int width, int height) {}
 	
 	
-	virtual void onKeyPressed(int key) {};
+	virtual void onKeyPressed(int key) {}
 	
-	virtual void onPointerDown(int button, double x, double y) {};
-	virtual void onPointerUp(int button, double cursorX, double cursorY) {};
+	virtual void onPointerDown(int button, double x, double y) {}
+	virtual void onPointerUp(int button, double cursorX, double cursorY) {}
 	
-	virtual void onPointerMoved(double x, double y) {};
+	virtual void onPointerMoved(double x, double y) {}
 	
 
 protected:
 	AppState() {};
+
 
 	AppState* findByName(std::string stateName) {
 		return m_pParent->findByName(stateName);

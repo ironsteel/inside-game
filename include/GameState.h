@@ -32,7 +32,7 @@ class GameState : public AppState
 {
 public:
 	GameState();
-	~GameState();
+	virtual ~GameState();
 	DECLARE_APPSTATE_CLASS(GameState)
 	
 	void enter();
@@ -51,15 +51,15 @@ public:
 	
 private:
 	void doSelection(float x, float y);
-	
-	void loadFonts(const char *directory);
-	
+
 private:
 	
 	ShaderProgram* mShaderProgram;
 	
 	Camera* mCamera;
 	GameBoard* mGameBoard;
+
+	Rocket::Core::ElementDocument* mGameStateGui;
 
 	bool mLeftPressed;
 	

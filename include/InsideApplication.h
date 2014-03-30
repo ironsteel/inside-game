@@ -46,21 +46,10 @@ public:
 	void onPointerUp(int button, double cursorX, double cursorY);
 	
 	void onPointerMoved(double x, double y);
-   
-	
-	
-private:
-//	void doSelection(float x, float y);
-	
-	void loadFonts(const char* directory);
+
 	
 private:
 	AppStateManager* mStateManager;
-	
-	
-
-	
-	
 	
 };
 
