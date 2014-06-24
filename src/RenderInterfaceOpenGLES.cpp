@@ -14,7 +14,7 @@
  *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -62,7 +62,7 @@ void main() { \
 	vcolor = color;\
 	vec2 tranformedPos =  position + translation;\
 	gl_Position = projection * vec4(tranformedPos, 0.0, 1.0); \
-} \ 
+}\
 ";
 
 //
@@ -73,75 +73,71 @@ varying vec2 v_texCoord; \
 varying vec4 vcolor; \
 \
 void main() { \
-    gl_FragColor = vcolor;\ 
-} \ 
-    ";
+	gl_FragColor = vcolor;\
+}\
+";
 
 const char* fragShaderTextured = 
-"#version 100 \n\
-precision mediump float;\
+		"#version 100 \n\
+		precision mediump float;\
 varying vec2 v_texCoord; \
 varying vec4 vcolor; \
 uniform sampler2D textureHandle;\
 \
 void main() { \
-    gl_FragColor = texture2D(textureHandle, v_texCoord.st) * vcolor;\ 
-} \ 
-    ";
-
-
-
-
+	gl_FragColor = texture2D(textureHandle, v_texCoord.st) * vcolor;\
+}\
+";
 
 RenderInterfaceOpenGLES::RenderInterfaceOpenGLES()
 {
-    compileShaders();
+	compileShaders();
 }
 
 void RenderInterfaceOpenGLES::SetViewport(int width, int height)
 {
-    mProjection = glm::ortho(0.0f, (float)width, (float)height, 0.0f);
-    m_width = width;
-    m_height = height;
+	mProjection = glm::ortho(0.0f, (float)width, (float)height, 0.0f);
+	m_width = width;
+	m_height = height;
 }
 
 
 // Called by Rocket when it wants to render geometry that it does not wish to optimise.
 void RenderInterfaceOpenGLES::RenderGeometry(Rocket::Core::Vertex* vertices, int ROCKET_UNUSED(num_vertices), int* indices, int num_indices, const Rocket::Core::TextureHandle texture, const Rocket::Core::Vector2f& translation)
 {
- 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    if (!texture)
-    {
-        glUseProgram(mColorShaderProgram);
-        glDisable(GL_TEXTURE_2D);
-    }
-    else
-    {
-        glUseProgram(mTextureShaderProgram);
-        glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	if (!texture)
+	{
+		glUseProgram(mColorShaderProgram);
+		glDisable(GL_TEXTURE_2D);
+	}
+	else
+	{
+		glUseProgram(mTextureShaderProgram);
+		glEnable(GL_TEXTURE_2D);
 		glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, (GLuint) texture);
-        glUniform1i(textureLocation, 0);
-        glVertexAttribPointer(VERTEX_TEX_COODRS_INDEX, 2, GL_FLOAT, GL_FALSE, sizeof(Rocket::Core::Vertex), &vertices[0].tex_coord);
+		glBindTexture(GL_TEXTURE_2D, (GLuint) texture);
+		glUniform1i(textureLocation, 0);
+		glVertexAttribPointer(VERTEX_TEX_COODRS_INDEX, 2, GL_FLOAT, GL_FALSE, sizeof(Rocket::Core::Vertex), &vertices[0].tex_coord);
 		glEnableVertexAttribArray(VERTEX_TEX_COODRS_INDEX);
-    }
+	}
 
-    glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(mProjection));
-    glUniform2f(transLocation, translation.x, translation.y);
+	glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(mProjection));
+	glUniform2f(transLocation, translation.x, translation.y);
 
-    glVertexAttribPointer(VERTEX_POSITION_INDEX, 2, GL_FLOAT, GL_FALSE, sizeof(Rocket::Core::Vertex), &vertices[0].position);
-    glVertexAttribPointer(VERTEX_COLOR_INDEX, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Rocket::Core::Vertex), &vertices[0].colour);
+	glVertexAttribPointer(VERTEX_POSITION_INDEX, 2, GL_FLOAT, GL_FALSE, sizeof(Rocket::Core::Vertex), &vertices[0].position);
+	glVertexAttribPointer(VERTEX_COLOR_INDEX, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Rocket::Core::Vertex), &vertices[0].colour);
 
 
 	glEnableVertexAttribArray(VERTEX_POSITION_INDEX);
 	glEnableVertexAttribArray(VERTEX_COLOR_INDEX);
 
-    glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, indices);
+	glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, indices);
 
-    glDisable(GL_BLEND);
+	glDisable(GL_BLEND);
 
 }
 
@@ -218,7 +214,7 @@ bool RenderInterfaceOpenGLES::LoadTexture(Rocket::Core::TextureHandle& texture_h
 	memcpy(&header, buffer, sizeof(TGAHeader));
 	
 	int color_mode = header.bitsPerPixel / 8;
-	int image_size = header.width * header.height * 4; // We always make 32bit textures 
+	int image_size = header.width * header.height * 4; // We always make 32bit textures
 	
 	if (header.dataType != 2)
 	{
@@ -300,28 +296,28 @@ void RenderInterfaceOpenGLES::ReleaseTexture(Rocket::Core::TextureHandle texture
 
 GLuint RenderInterfaceOpenGLES::compileShaders()
 {
-    GLuint vert = ShaderUtils::compileShader(vertShader, GL_VERTEX_SHADER); 
-	GLuint fragColored = ShaderUtils::compileShader(fragShader, GL_FRAGMENT_SHADER); 
-	GLuint fragTextured = ShaderUtils::compileShader(fragShaderTextured, GL_FRAGMENT_SHADER); 
-    
+	GLuint vert = ShaderUtils::compileShader(vertShader, GL_VERTEX_SHADER);
+	GLuint fragColored = ShaderUtils::compileShader(fragShader, GL_FRAGMENT_SHADER);
+	GLuint fragTextured = ShaderUtils::compileShader(fragShaderTextured, GL_FRAGMENT_SHADER);
+
 	
 	mColorShaderProgram = ShaderUtils::createProgramAndAttachShaders(vert, fragColored);
-    bindVertexAttributes(mColorShaderProgram);
+	bindVertexAttributes(mColorShaderProgram);
 	ShaderUtils::linkProgram(mColorShaderProgram);
 	
-    
+
 	mTextureShaderProgram = ShaderUtils::createProgramAndAttachShaders(vert, fragTextured);
-    bindVertexAttributes(mTextureShaderProgram);
+	bindVertexAttributes(mTextureShaderProgram);
 	ShaderUtils::linkProgram(mTextureShaderProgram);
 	
-    transLocation = 0;
-    projectionLocation = 1;
-    textureLocation = 2;
-    
+	transLocation = 0;
+	projectionLocation = 1;
+	textureLocation = 2;
+
 }
 void RenderInterfaceOpenGLES::bindVertexAttributes(GLuint program) 
 {
-    glBindAttribLocation(program, VERTEX_POSITION_INDEX, "position");
-    glBindAttribLocation(program, VERTEX_TEX_COODRS_INDEX, "texcoord");
-    glBindAttribLocation(program, VERTEX_COLOR_INDEX, "color");
+	glBindAttribLocation(program, VERTEX_POSITION_INDEX, "position");
+	glBindAttribLocation(program, VERTEX_TEX_COODRS_INDEX, "texcoord");
+	glBindAttribLocation(program, VERTEX_COLOR_INDEX, "color");
 }
