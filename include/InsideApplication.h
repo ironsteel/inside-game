@@ -47,6 +47,7 @@ public:
 	
 	void onPointerMoved(double x, double y);
 
+	bool isRunning();
 	
 private:
 	AppStateManager* mStateManager;

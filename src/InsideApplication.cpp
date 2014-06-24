@@ -101,3 +101,8 @@ void InsideApplication::onPointerMoved(double x, double y)
 	GUI::getInstance().processMouseMove(x, y);
 	mStateManager->getActiveState()->onPointerMoved(x, y);
 }
+
+bool InsideApplication::isRunning()
+{
+	return !mStateManager->m_bShutdown;
+}

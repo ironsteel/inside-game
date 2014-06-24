@@ -99,7 +99,7 @@ void GUI::processMouseMove(double x, double y)
 }
 
 
-Rocket::Core::Context *GUI::getContext()
+Rocket::Core::Context* GUI::getContext()
 {
 	return mRocketContext;
 }

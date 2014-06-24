@@ -33,12 +33,14 @@
 
 using namespace std;
 
-GameState::GameState()
+GameState::GameState() : mGameStateGui(NULL)
 {
 	mGameBoard = new GameBoard();
 	mCamera = new Camera(glm::vec3(0, 0, 0), glm::vec3(0, 20, -20), glm::vec3(0, 1, 0));
 	mGameBoard->initGeometry();
 	mShaderProgram = ShaderManager::getInstance().createShaderProgram("simple", "shaders/simple.vsh", "shaders/simple.fsh");
+	// Load and show the tutorial document.
+	mGameStateGui = GUI::getInstance().getContext()->LoadDocument("../resources/layouts/demo.rml");
 }
 
 GameState::~GameState()
@@ -53,8 +55,10 @@ GameState::~GameState()
 
 void GameState::enter()
 {
-	// Load and show the tutorial document.
-	mGameStateGui = GUI::getInstance().getContext()->LoadDocument("../resources/layouts/demo.rml");
+	int viewPort[4];
+	glGetIntegerv(GL_VIEWPORT, viewPort);
+	mCamera->windowSizeChanged(viewPort[2], viewPort[3]);
+
 	if(mGameStateGui != NULL) {
 		mGameStateGui->Show();
 	}

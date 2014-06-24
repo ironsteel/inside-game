@@ -55,41 +55,6 @@ AppState* AppStateManager::findByName(std::string stateName)
 void AppStateManager::start(AppState* state)
 {
 	changeAppState(state);
-
-// 	double timeSinceLastFrame = 1;
-// 	double startTime = AdvancedOgreFramework::getCurrentTime();
-// 
-// 	while(!m_bShutdown)
-// 	{
-// 		if(AdvancedOgreFramework::getSingletonPtr()->m_pRenderWnd->isClosed())m_bShutdown = true;
-// 
-// 		Ogre::WindowEventUtilities::messagePump();
-// 
-// 		if(AdvancedOgreFramework::getSingletonPtr()->m_pRenderWnd->isActive())
-// 		{
-// 			startTime = AdvancedOgreFramework::getCurrentTime();
-// 
-// 			AdvancedOgreFramework::getSingletonPtr()->m_pKeyboard->capture();
-// 			AdvancedOgreFramework::getSingletonPtr()->m_pMouse->capture();
-// 
-// 			m_ActiveStateStack.back()->update(timeSinceLastFrame);
-// 
-// 			AdvancedOgreFramework::getSingletonPtr()->updateOgre(timeSinceLastFrame);
-// 			AdvancedOgreFramework::getSingletonPtr()->m_pRoot->renderOneFrame();
-// 
-// 			timeSinceLastFrame = AdvancedOgreFramework::getCurrentTime() - startTime;
-// 		}
-// 		else
-// 		{
-// #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-// 			Sleep(1000);
-// #else
-// 			sleep(1);
-// #endif
-// 		}
-// 	}
-// 
-// 	AdvancedOgreFramework::getSingletonPtr()->m_pLog->logMessage("Main loop quit");
 }
 
 void AppStateManager::changeAppState(AppState* state)

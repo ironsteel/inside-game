@@ -18,8 +18,9 @@ SET(LIBRARIES ${GLFW_LIBRARY} ${OPENGL_LIBRARY} ${PNG_LIBRARY} RocketCore Rocket
 
 aux_source_directory("${PROJECT_SOURCE_DIR}/src/." SRC_LIST)
 file(GLOB INCLUDE_LIST "${PROJECT_SOURCE_DIR}/include/*.h")
-file(GLOB RESOURCES "${PROJECT_SOURCE_DIR}/resources/shaders/*")
 
+file(GLOB RESOURCES "${PROJECT_SOURCE_DIR}/resources/shaders/*"
+                    "${PROJECT_SOURCE_DIR}/resources/layouts/*")
 
 include_directories("${PROJECT_SOURCE_DIR}/include/")
 

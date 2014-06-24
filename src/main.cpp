@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
 	double timeSinceLastFrame = 0;
 	
 	// Main loop
-	while(!glfwWindowShouldClose(window) )
+	while(!glfwWindowShouldClose(window) && app.isRunning())
 	{
 		
 		startTime = getCurrentTime();

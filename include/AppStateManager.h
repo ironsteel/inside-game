@@ -28,12 +28,15 @@ public:
 	void popAllAndPushAppState(AppState* state);
 	AppState* getActiveState();
 
+public:
+	bool m_bShutdown;
+
 protected:
 	void init(AppState *state);
 
 	std::vector<AppState*> m_ActiveStateStack;
 	std::vector<state_info> m_States;
-	bool m_bShutdown;
+
 };
 
 #endif // APP_STATE_MANAGER_H

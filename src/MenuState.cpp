@@ -9,6 +9,7 @@ MenuState::MenuState()
 {
 	mMenuStateGui = GUI::getInstance().getContext()->LoadDocument("../resources/layouts/main_menu.rml");
 	mMenuStateGui->GetElementById("start")->AddEventListener("click", this);
+	mMenuStateGui->GetElementById("exit")->AddEventListener("click", this);
 }
 
 MenuState::~MenuState()
@@ -52,5 +53,9 @@ void MenuState::reshape(int width, int height)
 
 void MenuState::ProcessEvent(Event &event)
 {
-	pushAppState(m_pParent->findByName("GameState"));
+	if(event.GetCurrentElement()->GetId() == "exit") {
+		m_pParent->shutdown();
+	} else {
+		pushAppState(m_pParent->findByName("GameState"));
+	}
 }

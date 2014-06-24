@@ -33,7 +33,7 @@ ShaderProgram* ShaderManager::createShaderProgram(const std::string& name, const
 	
 	ShaderProgram* shaderProgram = new ShaderProgram(vertexShader, fragmentShader);
 	if(!shaderProgram->link()) {
-		throw new std::runtime_error("Cannot link shader program");
+		throw std::runtime_error("Cannot link shader program");
 	}
 	
 	mShaderPrograms[name] = shaderProgram;
