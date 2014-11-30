@@ -55,7 +55,7 @@ void CubeGeometry::bindBuffers(GLint vertexId, GLint textureCoordsId, GLint norm
 	
 	glEnableVertexAttribArray(normalsId);
 	// Describe our vertices array to OpenGL (it can't guess its format automatically)
-	glBindBuffer(GL_ARRAY_BUFFER, mVboIds[4]);
+	glBindBuffer(GL_ARRAY_BUFFER, mVboIds[3]);
 	glVertexAttribPointer(
 		normalsId, // attribute
 		3,                 // number of elements per vertex, here (x,y,z)
@@ -222,7 +222,7 @@ void CubeGeometry::initGeometry()
 		1.0, 0.0,  0.0,
 		1.0, 0.0,  0.0,
 	};
-	glBindBuffer(GL_ARRAY_BUFFER,  mVboIds[4]);
+	glBindBuffer(GL_ARRAY_BUFFER,  mVboIds[3]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(cube_normals), cube_normals, GL_STATIC_DRAW);
 	
 	glBindBuffer(GL_ARRAY_BUFFER,  0);
