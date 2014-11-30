@@ -63,7 +63,7 @@ GLuint ShaderUtils::compileShader(const char *src, GLenum shaderType)
 	
 	if(shader == 0)
 		return 0;
-	glShaderSource(shader, 1, const_cast<const GLchar* const*>(&src), NULL);
+	glShaderSource(shader, 1, &src, NULL);
 	
 	glCompileShader(shader);
 	
